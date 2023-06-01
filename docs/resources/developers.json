@@ -1,0 +1,75 @@
+[
+  {
+    "id": 1,
+    "name": "John Smith",
+    "age": 28,
+    "salary": 50000,
+    "favoriteLanguages": [1, 3, 5]
+  },
+  {
+    "id": 2,
+    "switch-edu-id": "12-432-23",
+    "name": "Emma Johnson",
+    "age": null,
+    "salary": 60000,
+    "favoriteLanguages": [2, 4]
+  },
+  {
+    "id": 3,
+    "name": "Michael Brown",
+    "age": 35,
+    "salary": 70000,
+    "favoriteLanguages": [1, 2, 3]
+  },
+  {
+    "id": 4,
+    "name": "Sophia Davis",
+    "age": 40,
+    "salary": null,
+    "favoriteLanguages": [null, 4, 5]
+  },
+  {
+    "id": 5,
+    "switch-edu-id": "58-102-33",
+    "name": "William Miller",
+    "age": 26,
+    "salary": 55000,
+    "favoriteLanguages": null
+  },
+  {
+    "id": 6,
+    "name": null,
+    "age": 33,
+    "salary": 65000,
+    "favoriteLanguages": [1, 2]
+  },
+  {
+    "id": 7,
+    "name": "James Taylor",
+    "age": null,
+    "salary": null,
+    "favoriteLanguages": [3]
+  },
+  {
+    "id": 8,
+    "name": "Ava Anderson",
+    "age": 29,
+    "salary": 55000,
+    "favoriteLanguages": [2, 4, 5]
+  },
+  {
+    "id": 9,
+    "switch-edu-id": "42-192-93",
+    "name": "Alexander Martinez",
+    "age": 27,
+    "salary": 75000,
+    "favoriteLanguages": [1, 2]
+  },
+  {
+    "id": 10,
+    "name": "Isabella Johnson",
+    "age": 24,
+    "salary": null,
+    "favoriteLanguages": [1, 3, 4, 5]
+  }
+]
