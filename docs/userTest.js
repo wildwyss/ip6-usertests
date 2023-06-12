@@ -1,10 +1,156 @@
-import { from }      from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
-import { JsonMonad } from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
-import * as _        from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
-import {createMonadicIterable} from "./Kolibri/contrib/wild_wyss/src/iterator/util/util.js";
+import {from} from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
+import {JsonMonad} from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
+import * as _ from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
 
 // --------------------------------------------  INTRO  ----------------------------------------------------------------
 
+/**
+ * Welcome & thanks that you will solve our user test, we appreciate it very much!
+ * This user test is divided up in two parts:
+ * 1. The power of lazy sequences
+ * 2. The easy way to query different data structures
+ */
+
+// --------------------------------------------  PART I  ----------------------------------------------------------------
+
+/**
+ * In this project we built a set of functions to produce and transform lazy sequences.
+ * A lazy sequence is a sequence of values, which never fully materialize itself in memory.
+ * Therefore, lazy sequences can consist of infinite values.
+ *
+ * Such sequences can be created using a simple Constructor, taking three values:
+ * 1. An initial value, which is the first value to be returned.
+ * 2. An until function, which decides on behalf of the value if further elements can be generated, and returns false if not
+ * 3. An incrementation function, which defines how the next value is calculated based on the current value.
+ *
+ * In the following you will solve small exercises based on lazy sequences.
+ *
+ * _Note:_ The lazy sequence module is imported as {@link _}. This way you can easily access all operations on sequences using `_.`;
+ *         For example to call the function map just use `const mapped = _.map(x => 2*x)([1,2,3,4,5]);`
+ *
+ * _Note 2:_ Since sequences are lazy, there is no direct element access on a sequence.
+ *           But you can easily deconstruct a sequence using the `...`-operator.
+ *           For example with our previous mapped values just use `console.log(...mapped);` to log all values of the sequence to the console.
+ *
+ * _Note 3:_ Pay attention with infinite iterators, as they, when deconstructured try to eagerly evaluate each element of the sequence.
+ *           This will go on forever and your browser will not respond anymore. use {@link _.take} to only evaluate a certain amount of values.
+ */
+
+// This is a simple example of such a lazy sequence, which produces the values from 0 to 100
+const seq1 = _.Iterator(0, i => i + 1, i => i < 100);
+
+
+/**
+ * TODO: implement this function repeatF
+ *
+ * repeatF takes a function `f` and a value `x` as arguments and creates an infinite
+ * sequence starting with `x` and applying `f` to the last returned value in each iteration.
+ *
+ * @template _T_
+ * @param { (x:_T_) => _T_ } f - the function to apply in each iteration
+ * @param { _T_ } x            - the initial value
+ *
+ * @returns { IteratorMonadType<_T_> }
+ */
+const repeatF = (f, x) => _.Iterator(x, f, _ => false);
+
+
+/**
+ * Halves the given value.
+ * @param { Number } x
+ * @returns { Number }
+ */
+const halve = x => x / 2;
+
+/** TODO 2: implement this function halves
+ *
+ * halves is an infinite sequence which halves the initial value on each iteration.
+ * The sequence should halve the previous value in each iteration. Use the function {@link halve}.
+ *
+ * @param   { Number } h0
+ * @returns { IteratorMonadType<Number> }
+ * @example
+ * const h = _.halves(10);
+ *
+ * console.log(..._.take(2)(h));
+ * // => Logs '10, 5'
+ */
+const halves = h0 => repeatF(halve, h0);
+
+
+/** TODO 3:
+ * Try out your code! Log some elements using `{@link _.take}` to the browser console!
+ */
+console.log(/**log the result of {@link halves} here*/);
+
+
+/**
+ *
+ * Now that you have a feeling about sequences you are ready to solve an exercise with a little more complexity:
+ * Given is the following function {@link diff}:
+ *
+ *
+ * {@link diff} finds the slope of a given function f at given value x if h approaches 0.
+ * So it is the basic formula to get the slope of a funciton.
+ *
+ * @callback
+ * @type {
+ *            (f: (x: Number) => Number)
+ *         => (x: Number)
+ *         => (h: Number)
+ *         => Number
+ * }
+ *
+ */
+const diff = f => x => h => (f(x + h) - f(x)) / h;
+
+/**
+ * A simple function to calculate the derivative of.
+ * @param  { Number } x
+ * @return { Number }
+ */
+const f = x => x * x;
+
+/**
+ * TODO 4:
+ * The problem with this function is, to determine an h that is close enough to zero.
+ * Fortunately, we can use our function {@link halves} to generate smaller and smaller values from a given starting point h0!
+ *
+ *
+ * Implement the following function {@link differentiate}, which takes a starting value h0, a function f and a value x.
+ * This function will then return a Sequence of {@link Number Numbers} approaching closer and closer the real slope of f at the value x!
+ * _Note:_ use {@link _.map} to map the function {@link diff} over the halves!
+ *
+ * _Note 2:_ Use the funciton {@link f} defined above to test your implementation.
+ *           Since {@link differentiate} generates an infinite sequence, use again {@link _.take} to only take a certain amount of values.
+ *
+ * @type {
+ *          (h0: Number)
+ *       => (f: (x: Number) => Number)
+ *       => (x: Number)
+ *       => IteratorMonadType<Number>
+ * }
+ */
+const differentiate = h0 => f => x => _.map(diff(f)(x))(halves(h0));
+
+
+/**
+ * TODO 5:
+ * We can now differentiate which is great.
+ * But it would even be better if we wouldn't get an infinite sequence of values, but only one value which is accurate enough.
+ *
+ * One can argue that the value has been calculated accurately enough if two values of the sequence have a difference smaller than a given epsilon.
+ * Implement a function called {@link within} therefore, which takes an epsilon and returns a value, if two following elements of a sequence have a smaller difference than epsilon!
+ *
+ * _Note:_ use {@link _.uncons} to get the first element of a sequence. See it's JSDoc example to see how it works!
+ *
+ * @type {
+ *      (eps: Number)
+ *   => (sequence: IteratorMonadType<Number>)
+ *   => Number
+ * }
+ *
+ */
 const within = eps => list => {
   const [a, rest] = _.uncons(list);
   const [b]       = _.uncons(rest);
@@ -14,27 +160,32 @@ const within = eps => list => {
   return within(eps)(rest);
 };
 
-const diff = f => x => h => (f(x + h) - f(x)) / h;
 
-const repeatFIterator = f => start => {
-  const iterator = () => {
-   let nextValue = start;
+/**
+ * TODO 6:
+ *
+ * Let's combine the created functions!
+ *
+ * Use your function {@link differentiate} to approximate the derivative of the function {@link f} at the point 1.0.
+ * Use 0.5 as starting point for h0.
+ *
+ * Then pass the sequence to your function {@link within} to get the derivative with an approximation of 0.0001.
+ *
+ */
+const derivativeSequence = differentiate(0.5)(f)(1.0);
+const derivativeOfFAtX = within(0.0001)(derivativeSequence);
 
-   const next = () => {
-     const value = nextValue;
-     nextValue = f(nextValue);
-     return { value, done: false}
-   };
-   return { next };
-  };
-  return createMonadicIterable(iterator);
-};
+console.log(derivativeOfFAtX);
 
-const f = x => x*x;
-const halve = x => x / 2;
-// console.log(...take(10)(repeatFIterator(halve)(10)));
-const differentiate = h0 => f => x => _.map(diff(f)(x))(repeatFIterator(halve)(h0));
-console.log(within(0.0001)(differentiate(0.5)(f)(0)));
+/**
+ * Conclusion:
+ * With lazy sequences it is very easy to calculate a derivative with arbitrary accuracy.
+ * Additionally, it allows us to split the code into many small pieces. These are separately testable, changeable or extendable.
+ *
+ * Imagine you don't want to halve the original h0 but quarter it with each step. To do this, simply
+ * modify the implementation of differentiate without changing any other code!
+ * Or if you also want to integrate, you can reuse the sequence {@link halves} and the function {@link within}.
+ */
 
 // --------------------------------------------  INTRO  ----------------------------------------------------------------
 /**
@@ -49,58 +200,9 @@ console.log(within(0.0001)(differentiate(0.5)(f)(0)));
  * Before we start, we need to acquire some additional knowledge to solve the user-test exercises.
  *
  * Content of the following section:
- * 1. Is something in it or not, the maybe type
- * 2. JINQ - available functions
- * 3. Examine some examples and learn from it
- * 4. It's your turn - solving exercises
- *
- */
-
-// ------------------------------------------  MAYBE-TYPE  -------------------------------------------------------------
-
-/**
- * 1. The Maybe-Type
- *
- * In this section, we learn how we can deal with maybe-types in JavaScript.
- * The maybe-type has two constructors: Just, which takes a value, and Nothing.
- * Assume, we have a function called openBabuschka which takes a Babuschka as argument and opens it.
- * If there is another Babschuka inside it will be returned wrapped with Just. Otherwise, Nothing will be returned.
- * As you can see, the maybe-type is a way to deal with values that might not be present.
- *
- * Don't know what a Babuschka is? See: https://de.wikipedia.org/wiki/Matrjoschka
- */
-const openBabuschka = babuschka => {
-  const innerBabuschka = babuschka.open();
-  if (innerBabuschka === undefined){
-    return Nothing;
-  }
-  return Just(innerBabuschka);
-};
-
-/**
- * Since this function returns a maybe-type, we need to know how to proceed with it.
- *
- * const maybeBabuschka = openBabuschka(Babuschka());
- *
- * But what can we do with this maybeBabuschka which might be there or not.
- *
- * Somehow we need to distinguish if a value is present or not.
- * This can simply be done, by passing to functions to the Babuschka:
- *
- *  maybeBabuschka
- *    (_ => console.log("no babuschka found"))   // Nothing case
- *    (bab => console.log("Hi, " + bab.name())); // Just case
- *
- * If a Babuschka is present, its name is printend to the console.
- *
- * But why should you use the mabye-type?
- * If a function returns a maybe, it forces you to handle possible failures represented as Nothing.
- * This leads to additional safety.
- *
- * _Note_: * To understand in depth how maybe is implemented in JavasScript (which is not required for this exercise), please consider the following file: docs/Kolibri/docs/src/kolibri/lambda/church.js
- *
- *
- * Nice, the maybe-type is hopefully clear, and we can proceed with the next section.
+ * 1. JINQ - available functions
+ * 2. Examine some examples and learn from it
+ * 3. It's your turn - solving exercises
  */
 
 // ------------------------------------------------  JINQ  -------------------------------------------------------------
@@ -171,7 +273,7 @@ const fetchAndParseFile = async path =>
   /**@type Array<LanguageType> */
   const languages = await fetchAndParseFile('resources/languages.json');
   /**@type Array<DeveloperType> */
-  const devs      = await fetchAndParseFile('resources/developers.json');
+  const devs = await fetchAndParseFile('resources/developers.json');
 
   example1(languages);
   example2(devs);
@@ -186,15 +288,12 @@ const fetchAndParseFile = async path =>
  * @param {Array<LanguageType>} languages - programming languages
  */
 const example1 = languages => {
-  const maybeAllIds =
+  const allIds =
     from(JsonMonad(languages))
       .select(x => x['id'])
-      .result()
-      .get();
+      .result();
 
-  maybeAllIds
-    (_ => console.log("Something went wrong"))    // Nothing case
-    (x => console.log("language id's: " , ...x)); // Just case, result will be printed to the console
+  console.log("language ids: ", ...allIds);
 };
 
 /**
@@ -206,15 +305,12 @@ const example1 = languages => {
  * @param {Array<DeveloperType>}developers
  */
 const example2 = developers => {
-  const maybeAllIds =
+  const allIds =
     from(JsonMonad(developers))
       .select(x => x['switch-edu-id'])
-      .result()
-      .get();
+      .result();
 
-  maybeAllIds
-    (_ => console.log("Something went wrong"))         // Nothing case
-    (x => console.log("student id's: " , String(x))); // Just case, result will be printed to the console
+  console.log("student ids: ", ...allIds);
 };
 
 
@@ -248,16 +344,13 @@ const example2 = developers => {
  */
 const salaryOfMichael = devs => {
 
-  const maybeSalary =
+  const salaryList =
     from(JsonMonad(devs))
       .where(p => p['name'] === "Michael Brown")
       .map(p => p['salary'])
-      .result()
-      .get();
+      .result();
 
-  maybeSalary
-    (_ => console.log("Michaels salary"))  // Nothing case
-    (x => console.log(...x));                   /* Just case, result will be printed to the console */
+  console.log(...salaryList);
 };
 
 
@@ -268,57 +361,14 @@ const salaryOfMichael = devs => {
  */
 const sophiasProgrammingLanguages = (devs, languages) => {
 
-  const maybeLanguages =
+  const sophiasLangauges =
     from(JsonMonad(devs))
       .where(dev => dev["name"] === "Sophia Davis")
       .map(sophia => sophia["favoriteLanguages"])
       .pairWith(JsonMonad(languages))
       .where(([id, language]) => id === language["id"])
       .select(([_, language]) => language["name"])
-      .result().get();
+      .result();
 
-  maybeLanguages
-    (_ => console.log("Something went wrong"))  // Nothing case
-    (x => console.log(...x));                   // Just case, result will be printed to the console
+  console.log(...sophiasLangauges);                   // Just case, result will be printed to the console
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
