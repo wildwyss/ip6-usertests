@@ -1,6 +1,6 @@
-import {from} from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
-import {JsonMonad} from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
-import * as _ from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
+import { from }      from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
+import { JsonMonad } from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
+import * as _        from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
 
 // --------------------------------------------  INTRO  ----------------------------------------------------------------
 
@@ -9,6 +9,14 @@ import * as _ from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
  * This user test is divided up in two parts:
  * 1. The power of lazy sequences
  * 2. The easy way to query different data structures
+ *
+ * At the end of the user test you will fill out a questionnaire.
+ * Therefore, we would be thankful if you take notes on what you like or what bothers you while solving the tasks.
+ * Basically, we are interested in all information concerning our API.
+ *
+ * We are very grateful for your feedback, because it helps to make the API more understandable and robust.
+ * Thank you in advance!
+ *
  */
 
 // --------------------------------------------  PART I  ----------------------------------------------------------------
@@ -25,15 +33,15 @@ import * as _ from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
  *
  * In the following you will solve small exercises based on lazy sequences.
  *
- * _Note:_ The lazy sequence module is imported as {@link _}. This way you can easily access all operations on sequences using `_.`;
- *         For example to call the function map just use `const mapped = _.map(x => 2*x)([1,2,3,4,5]);`
+ * _Note 1:_ The lazy sequence module is imported as {@link _}. This way you can easily access all operations on sequences using `_.`;
+ *           For example to call the function map just use `const mapped = _.map(x => 2*x)([1,2,3,4,5]);`
  *
  * _Note 2:_ Since sequences are lazy, there is no direct element access on a sequence.
  *           But you can easily deconstruct a sequence using the `...`-operator.
  *           For example with our previous mapped values just use `console.log(...mapped);` to log all values of the sequence to the console.
  *
  * _Note 3:_ Pay attention with infinite iterators, as they, when deconstructured try to eagerly evaluate each element of the sequence.
- *           This will go on forever and your browser will not respond anymore. use {@link _.take} to only evaluate a certain amount of values.
+ *           This will go on forever and your browser will not respond anymore. Use {@link _.take} to only evaluate a certain amount of values.
  */
 
 // This is a simple example of such a lazy sequence, which produces the values from 0 to 100
@@ -77,21 +85,14 @@ const halve = x => x / 2;
  */
 const halves = h0 => repeatF(halve, h0);
 
-
-/** TODO 3:
- * Try out your code! Log some elements using `{@link _.take}` to the browser console!
- */
-console.log(/**log the result of {@link halves} here*/);
-
-
 /**
  *
  * Now that you have a feeling about sequences you are ready to solve an exercise with a little more complexity:
  * Given is the following function {@link diff}:
  *
  *
- * {@link diff} finds the slope of a given function f at given value x if h approaches 0.
- * So it is the basic formula to get the slope of a funciton.
+ * {@link diff} finds the slope of a given function f at a given value x if h approaches 0.
+ * So it is the basic formula to get the slope of a function f.
  *
  * @callback
  * @type {
@@ -100,12 +101,11 @@ console.log(/**log the result of {@link halves} here*/);
  *         => (h: Number)
  *         => Number
  * }
- *
  */
 const diff = f => x => h => (f(x + h) - f(x)) / h;
 
 /**
- * A simple function to calculate the derivative of.
+ * An example function - we will calculate its derivative later.
  * @param  { Number } x
  * @return { Number }
  */
@@ -121,7 +121,7 @@ const f = x => x * x;
  * This function will then return a Sequence of {@link Number Numbers} approaching closer and closer the real slope of f at the value x!
  * _Note:_ use {@link _.map} to map the function {@link diff} over the halves!
  *
- * _Note 2:_ Use the funciton {@link f} defined above to test your implementation.
+ * _Note 2:_ Use the function {@link f} defined above to test your implementation.
  *           Since {@link differentiate} generates an infinite sequence, use again {@link _.take} to only take a certain amount of values.
  *
  * @type {
@@ -132,7 +132,6 @@ const f = x => x * x;
  * }
  */
 const differentiate = h0 => f => x => _.map(diff(f)(x))(halves(h0));
-
 
 /**
  * TODO 5:
@@ -326,19 +325,12 @@ const example2 = developers => {
  * Have a look at the JSON files in the resources folder. Since these are results from a survey,
  * there were no mandatory fields and there are many nulls in it.
  *
- *
- *
- * Exercise 1: Salary from Michael
- * Find the salary from Michael using the given Json-data called 'developers' and print it to the console.
- *
- * Exercise 2: Sophias programming languages
- * Print all of Sophias favorite programming languages to the console.
- * For this exercise, you have to combine both datasets.
- *
  * Have fun!
  */
 
 /**
+ * TODO 1: Salary of Michael
+ * Find the salary from Michael using the given Json-data called 'developers' and print it to the console.
  * @param { Array<DeveloperType> } devs
  * @returns void
  */
@@ -355,6 +347,10 @@ const salaryOfMichael = devs => {
 
 
 /**
+ * TODO 2: Sophias programming languages
+ * Print all of Sophias favorite programming languages to the console.
+ * For this exercise, you have to combine both datasets.
+ *
  * @param { Array<DeveloperType> } devs
  * @param { Array<LanguageType> } languages
  * @returns void
