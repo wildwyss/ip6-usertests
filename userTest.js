@@ -20,7 +20,7 @@ const TODO = _ => undefined;
  *
  */
 
-// --------------------------------------------  PART I  ----------------------------------------------------------------
+// --------------------------------------------  PART I  ---------------------------------------------------------------
 
 /**
  * In this project we built a set of functions to produce and transform lazy sequences.
@@ -29,7 +29,8 @@ const TODO = _ => undefined;
  *
  * Such sequences can be created using a simple constructor, taking three values:
  * 1. An initial value, which is the first value to be returned.
- * 2. An until function, which decides on behalf of the value if further elements can be generated, and returns false if not
+ * 2. An until function, which decides on behalf of the value if further elements can be generated, and returns false if
+ *    not.
  * 3. An incrementation function, which defines how the next value is calculated based on the current value.
  *
  * In the following you will solve small exercises based on lazy sequences.
@@ -40,15 +41,20 @@ const TODO = _ => undefined;
  *
  * Look at this simple example of such a lazy sequence, which produces the values from 0 to 100!
  *
- * _Note 1:_ The lazy sequence module is imported as {@link _}. This way you can easily access all operations on sequences using `_.`;
- *           For example to call the function map just use `const mapped = _.map(x => 2*x)([1,2,3,4,5]);`.
+ * _Note 1:_ The lazy sequence module is imported as {@link _}. This way you can easily access all operators on
+ *           sequences using `_.`; For example to call the function map just use
+ *           `const mapped = _.map(x => 2*x)([1,2,3,4,5]);`.
+ *           hint: Operations defined for sequences (such as `map`) can be used on any {@link Iterable}.
+ *           So they can also be used to transform normal JS arrays, HTMLCollections and so on.
  *
  * _Note 2:_ Since sequences are lazy, there is no direct element access on a sequence.
  *           But you can easily deconstruct a sequence using the `...`-operator.
- *           For example with our previous mapped values just use `console.log(...mapped);` to log all values of the sequence to the console.
+ *           For example with our previous mapped values just use `console.log(...mapped);` to log all values of the
+ *           sequence to the console.
  *
- * _Note 3:_ Pay attention with infinite iterators, as they, when deconstructed, try to eagerly evaluate each element of the sequence.
- *           This will go on forever and your browser will not respond anymore. Use {@link _.take} to only evaluate a certain amount of values.
+ * _Note 3:_ Pay attention with infinite iterators, as they, when deconstructed, try to eagerly evaluate each element of
+ *           the sequence. This will go on forever and your browser will not respond anymore. Use {@link _.take} to only
+ *           evaluate a certain amount of values.
  *
  * @type { IteratorMonadType<Number> }
  *
@@ -130,17 +136,19 @@ const f = x => x * x;
 /**
  * TODO 3: finding a good h
  * The difficulty when using this function is, to determine an h that is close enough to zero.
- * Fortunately, we can use our function {@link halves} to generate smaller and smaller values from a given starting point h0!
+ * Fortunately, we can use our function {@link halves} to generate smaller and smaller values from a given starting
+ * point h0!
  *
  *
- * Implement the following function {@link differentiate}, which takes a starting value `h0`, a function `f` and a value `x`.
- * This function will then return a Sequence of {@link Number Numbers} approaching closer and closer to the real
+ * Implement the following function {@link differentiate}, which takes a starting value `h0`, a function `f` and a value
+ * `x`.This function will then return a Sequence of {@link Number Numbers} approaching closer and closer to the real
  * slope of `f` at the value `x`!
  *
  * _Note:_ use {@link _.map} to map the function {@link diff} over the halves!
  *
  * _Note 2:_ Use the function {@link f} defined above to test your implementation.
- *           Since {@link differentiate} generates an infinite sequence, use again {@link _.take} to only take a certain amount of values.
+ *           Since {@link differentiate} generates an infinite sequence, use again {@link _.take} to only take a certain
+ *           amount of values.
  *
  * @type {
  *          (h0: Number)
@@ -160,10 +168,12 @@ const differentiate = h0 => f => x => _.map(diff(f)(x))(halves(h0));
 /**
  * TODO 4: finding more accurate slopes
  * We can now differentiate which is great.
- * But it would even be better if we wouldn't get an infinite sequence of values, but only one value which is accurate enough.
+ * But it would even be better if we wouldn't get an infinite sequence of values, but only one value which is accurate
+ * enough.
  *
- * One can argue that the value has been calculated accurately enough if two values of the sequence have a difference smaller than a given epsilon.
- * Implement a function called {@link within} therefore, which takes an epsilon and returns a value, if two following elements of a sequence have a smaller difference than epsilon!
+ * One can argue that the value has been calculated accurately enough if two values of the sequence have a difference
+ * smaller than a given epsilon. Implement a function called {@link within} therefore, which takes an epsilon and
+ * returns a value, if two following elements of a sequence have a smaller difference than epsilon!
  *
  * _Note:_ use {@link _.uncons} to get the first element of a sequence. See it's JSDoc example to see how it works!
  *
@@ -204,7 +214,8 @@ console.log(slopeOfFAtX);
 /**
  * Conclusion:
  * With lazy sequences it is very easy to calculate slopes of functions with arbitrary accuracy.
- * Additionally, it allows us to split the code into many small pieces. These are separately testable, changeable or extendable.
+ * Additionally, it allows us to split the code into many small pieces. These are separately testable, changeable or
+ * extendable.
  *
  * Imagine you don't want to halve the original h0 but quarter it with each step. To do this, simply
  * modify the implementation of differentiate without changing any other code!
@@ -243,7 +254,8 @@ console.log(slopeOfFAtX);
  *
  * What is happening here?
  * from:   Takes a data source and adds further functionality to it.
- * select: For each element, we map it to its object-property 'type', so now it's a list of animal types (you can also use map for this).
+ * select: For each element, we map it to its object-property 'type', so now it's a list of animal types (you can also
+ *         use map for this).
  * where:  It works like a filter, we're taking only the elements which match the given predicate.
  * result: Returns a new datasource based on the previous operations.
  *
@@ -274,7 +286,8 @@ console.log(slopeOfFAtX);
  *
  * A great thing about JINQ is, that it can easily be used to process any lists of JavaScript objects.
  * For this reason, such a list must be wrapped with the constructor {@link JsonMonad}.
- * A JsonMonad is an {@link Iterable iterable object}, which, when iterating, returns element after element of the underlying list.
+ * A JsonMonad is an {@link Iterable iterable object}, which, when iterating, returns element after element of the
+ * underlying list.
  */
 
 // ------------------------------------------------  Examples ----------------------------------------------------------
@@ -304,7 +317,7 @@ const fetchAndParseFile = async path =>
   example1(languages);
   example2(devs);
   salaryOfMichael(devs);
-  sophiasProgrammingLanguages(devs, languages);
+  console.log(...sophiasProgrammingLanguages(devs, languages));
 })();
 
 /**
@@ -384,18 +397,33 @@ const salaryOfMichael = devs => {
  *
  * @param { Array<DeveloperType> } devs
  * @param { Array<LanguageType> } languages
- * @returns void
+ * @returns { MonadType<Array<String>> }
+ *
+ * @example
+ * const langs = sophiasProgrammingLanguages(devs, languages);
+ * console.log(...langs);
+ * // => Logs 'C++, Haskell'
  */
-const sophiasProgrammingLanguages = (devs, languages) => {
-
-  const sophiasLanguages =
+const sophiasProgrammingLanguages = (devs, languages) =>
     from(JsonMonad(devs))
-      .where(dev => dev["name"] === "Sophia Davis")
-      .map(sophia => sophia["favoriteLanguages"])
-      .pairWith(JsonMonad(languages))
-      .where(([id, language]) => id === language["id"])
-      .select(([_, language]) => language["name"])
-      .result();
+        .where(dev => dev["name"] === "Sophia Davis")
+        .map(sophia => sophia["favoriteLanguages"])
+        .pairWith(JsonMonad(languages))
+        .where(([id, language]) => id === language["id"])
+        .select(([_, language]) => language["name"])
+        .result();
 
-  console.log(...sophiasLanguages);
-};
+/**
+ * Conclusion:
+ * As you can see, you can easily process any JSON-structures!
+ * This works because {@link JsonMonad} extends a given object by certain functionality (called monadic).
+ * Since JINQ only operates on this monadic interface, every object or data structures complying to this monadic
+ * interface can be processed using JINQ!
+ *
+ * {@link IteratorMonadType} complies to this monadic interface as well and can therefore be processed using JINQ.
+ *
+ * This means, you can enhance any data structure in this way and use it with JINQ, without changing the implementation
+ * of JINQ!
+ *
+ * Isn't that great?
+ */
