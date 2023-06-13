@@ -47,20 +47,20 @@ const TODO = _ => undefined;
  *           But you can easily deconstruct a sequence using the `...`-operator.
  *           For example with our previous mapped values just use `console.log(...mapped);` to log all values of the sequence to the console.
  *
- * _Note 3:_ Pay attention with infinite iterators, as they, when deconstructured try to eagerly evaluate each element of the sequence.
+ * _Note 3:_ Pay attention with infinite iterators, as they, when deconstructed, try to eagerly evaluate each element of the sequence.
  *           This will go on forever and your browser will not respond anymore. Use {@link _.take} to only evaluate a certain amount of values.
  *
  * @type { IteratorMonadType<Number> }
  *
  */
-const seq1 = _.Iterator(0, i => i + 1, i => i < 100);
-
+const seq1 = _.Iterator(0, i => i + 1, i => i > 100);
+console.log("A simple sequence from 0 to 100:", ...seq1);
 
 /**
  * TODO 1: Now follows the first task: implement this function {@link repeatF} which returns an {@link IteratorMonadType }.
  * Like in the example above - use the {@link _.Iterator}!
  *
- * repeatF takes a function `f` and a value `x` as arguments and creates an infinite
+ * {@link repeatF} takes a function `f` and a value `x` as arguments and creates an infinite
  * sequence starting with `x` and applying `f` to the last returned value in each iteration.
  *
  * @template _T_
@@ -78,7 +78,7 @@ const seq1 = _.Iterator(0, i => i + 1, i => i < 100);
 const repeatF = (f, x) => _.Iterator(x, f, _ => false);
 
 /**
- * (You don't have to change this)
+ * (You don't have to change this.)
  *
  * Halves the given value.
  * @param { Number } x
@@ -102,7 +102,7 @@ const halve = x => x / 2;
 const halves = h0 => repeatF(halve, h0);
 
 /**
- * (You don't have to change this)
+ * (You don't have to change this.)
  *
  * Now that you have a feeling about sequences you are ready to solve an exercise with a little more complexity:
  * Given is the following function {@link diff}:
@@ -119,7 +119,7 @@ const halves = h0 => repeatF(halve, h0);
 const diff = f => x => h => (f(x + h) - f(x)) / h;
 
 /**
- * (You don't have to change this)
+ * (You don't have to change this.)
  *
  * An example function - we will calculate its derivative later.
  * @param  { Number } x
@@ -256,7 +256,7 @@ console.log(slopeOfFAtX);
  * => docs/Kolibri/contrib/wild_wyss/src/jinq/
  *
  * Working with pairs:
- * A pair represents a immutable data structure holding exactly two values.
+ * A pair represents an immutable data structure holding exactly two values.
  *
  * Create a pair using the following syntax:
  * const pair = Pair("first")("second");
@@ -279,9 +279,11 @@ console.log(slopeOfFAtX);
 
 // ------------------------------------------------  Examples ----------------------------------------------------------
 
-// Functions to load a json file. You don't have to change this.
+// Functions to load a json file.
 
 /**
+ * (You don't have to change this.)
+ *
  * Loads a file from the given path.
  * @template _T_
  * @param { String } path - path to file
@@ -306,6 +308,8 @@ const fetchAndParseFile = async path =>
 })();
 
 /**
+ * (You don't have to change this.)
+ *
  * Example 1: How to work with jinq and maybe
  *
  * Prints all programming language id's to the console.
@@ -321,12 +325,14 @@ const example1 = languages => {
 };
 
 /**
+ * (You don't have to change this.)
+ *
  * Example 2: Dealing with absent values
  *
- * Prints all developer to the console, which have also a student id (not all developers have such an id,
- * but JINQ deals with it using the MaybeType.
+ * Prints all developers to the console, which also have a student id
+ * (Not all developers have such an id,but JINQ deals with that!)
  *
- * @param {Array<DeveloperType>}developers
+ * @param { Array<DeveloperType> } developers
  */
 const example2 = developers => {
   const allIds =
@@ -342,6 +348,7 @@ const example2 = developers => {
 /**
  * Now it's time to put you in charge. Solve the following exercises.
  * For this purpose, we have some survey results from developers and stored it in a file developers.json.
+ *
  * Additionally, we provide a json-collection of programming languages.
  * These two collections are already loaded and ready to use. The code for this is located a few lines above.
  *
@@ -370,10 +377,9 @@ const salaryOfMichael = devs => {
   console.log(...salaryList);
 };
 
-
 /**
- * TODO 2: Sophias programming languages
- * Print all of Sophias favorite programming languages to the console.
+ * TODO 2: Sophia's programming languages
+ * Print all of Sophia's favorite programming languages to the console.
  * For this exercise, you have to combine both datasets.
  *
  * @param { Array<DeveloperType> } devs
@@ -382,7 +388,7 @@ const salaryOfMichael = devs => {
  */
 const sophiasProgrammingLanguages = (devs, languages) => {
 
-  const sophiasLangauges =
+  const sophiasLanguages =
     from(JsonMonad(devs))
       .where(dev => dev["name"] === "Sophia Davis")
       .map(sophia => sophia["favoriteLanguages"])
@@ -391,5 +397,5 @@ const sophiasProgrammingLanguages = (devs, languages) => {
       .select(([_, language]) => language["name"])
       .result();
 
-  console.log(...sophiasLangauges);                   // Just case, result will be printed to the console
+  console.log(...sophiasLanguages);
 };
