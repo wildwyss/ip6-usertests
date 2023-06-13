@@ -1,7 +1,13 @@
 import { from }      from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
 import { JsonMonad } from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
 import * as _        from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
-const TODO = _ => undefined;
+import {nil} from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
+
+/**
+ *
+ * @type {(...data: any[]) => any}
+ */
+const TODO = s => console.log("TODO:", s);
 
 // --------------------------------------------  INTRO  ----------------------------------------------------------------
 
@@ -81,7 +87,7 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  * console.log(..._.take(4)(repeated));
  * // => Logs '0, 1, 2, 3'
  */
-const repeatF = (f, x) => _.Iterator(x, f, _ => false);
+const repeatF = (f, x) => TODO("implement repeatF");
 
 /**
  * (You don't have to change this.)
@@ -105,7 +111,7 @@ const halve = x => x / 2;
  * console.log(..._.take(2)(h));
  * // => Logs '10, 5'
  */
-const halves = h0 => repeatF(halve, h0);
+const halves = h0 => TODO("use repeatF and halve! to implement halves");
 
 /**
  * (You don't have to change this.)
@@ -163,7 +169,7 @@ const f = x => x * x;
  *
  * // => Logs '2.5, 2.25, 2.125, 2.0625, 2.03125'
  */
-const differentiate = h0 => f => x => _.map(diff(f)(x))(halves(h0));
+const differentiate = h0 => f => x => TODO("implement differentiate using the previous created functions.");
 
 /**
  * TODO 4: finding more accurate slopes
@@ -206,10 +212,9 @@ const within = eps => sequence => {
  * Then pass the sequence to your function {@link within} to get the slope with an approximation of `0.0001`.
  *
  */
-const seqOfSlopes = differentiate(0.5)(f)(1.0);
-const slopeOfFAtX = within(0.0001)(seqOfSlopes);
+const seqOfSlopes = TODO("use the previous functions to create a sequence of slopes!");
+const slopeOfFAtX = TODO("calculate the slope with an approximation of 0.0001 and log it to the console.");
 
-console.log(slopeOfFAtX);
 
 /**
  * Conclusion:
@@ -316,7 +321,7 @@ const fetchAndParseFile = async path =>
 
   example1(languages);
   example2(devs);
-  salaryOfMichael(devs);
+  console.log(...salaryOfMichael(devs));
   console.log(...sophiasProgrammingLanguages(devs, languages));
 })();
 
@@ -377,17 +382,11 @@ const example2 = developers => {
  * TODO 1: Salary of Michael
  * Find the salary from Michael using the given Json-data called 'developers' and print it to the console.
  * @param { Array<DeveloperType> } devs
- * @returns void
+ * @returns MonadType
  */
 const salaryOfMichael = devs => {
-
-  const salaryList =
-    from(JsonMonad(devs))
-      .where(p => p['name'] === "Michael Brown")
-      .map(p => p['salary'])
-      .result();
-
-  console.log(...salaryList);
+  TODO("get the salary of michael using JINQ");
+  return nil;
 };
 
 /**
@@ -397,21 +396,17 @@ const salaryOfMichael = devs => {
  *
  * @param { Array<DeveloperType> } devs
  * @param { Array<LanguageType> } languages
- * @returns { MonadType<Array<String>> }
+ * @returns { MonadType }
  *
  * @example
  * const langs = sophiasProgrammingLanguages(devs, languages);
  * console.log(...langs);
  * // => Logs 'C++, Haskell'
  */
-const sophiasProgrammingLanguages = (devs, languages) =>
-    from(JsonMonad(devs))
-        .where(dev => dev["name"] === "Sophia Davis")
-        .map(sophia => sophia["favoriteLanguages"])
-        .pairWith(JsonMonad(languages))
-        .where(([id, language]) => id === language["id"])
-        .select(([_, language]) => language["name"])
-        .result();
+const sophiasProgrammingLanguages = (devs, languages) => {
+  TODO("get sophia's favorite programming languages!");
+  return nil;
+};
 
 /**
  * Conclusion:
