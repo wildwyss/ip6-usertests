@@ -1,24 +1,24 @@
 import { from }      from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
 import { JsonMonad } from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
 import * as _        from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
-import {nil} from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
+import { nil }       from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
 
 /**
- *
- * @type {(...data: any[]) => any}
+ * Utility function that helps to find your way through the examples.
+ * @type {(...data: Array) => any }
  */
-const TODO = s => console.log("TODO:", s);
+const TODO = data => console.log("TODO:", data); // we will use this later; don't worry for now
 
 // --------------------------------------------  INTRO  ----------------------------------------------------------------
 
 /**
- * Welcome & thanks that you will solve our user test, we appreciate it very much!
+ * Welcome & thanks that you will solve our user test, we appreciate your time very much!
  * This user test is divided up into two parts:
  * 1. The power of lazy sequences
  * 2. The easy way to query different data structures
  *
- * At the end of the user test you will fill out a questionnaire.
- * Therefore, we would be thankful if you take notes on what you like or what bothers you while solving the tasks.
+ * At the end of the user test we will ask you to fill out a questionnaire.
+ * You may want to take notes along the way about what you like or what bothers you while solving the tasks.
  * Basically, we are interested in all information concerning our API.
  *
  * We are very grateful for your feedback, because it helps to make the API more understandable and robust.
@@ -29,33 +29,35 @@ const TODO = s => console.log("TODO:", s);
 // --------------------------------------------  PART I  ---------------------------------------------------------------
 
 /**
- * In this project we built a set of functions to produce and transform lazy sequences.
- * A lazy sequence is a sequence of values, which never fully materialize itself in memory.
- * Therefore, lazy sequences can consist of an infinite amount of values.
+ * In this project we have built a set of functions to produce and transform lazy sequences.
+ * A lazy sequence is a sequence of values that never fully materializes in memory.
+ * Therefore, lazy sequences can provide a large - even infinite - amount of values.
  *
- * Such sequences can be created using a simple constructor, taking three values:
+ * Such sequences can be created using a constructor, taking three values:
  * 1. An initial value, which is the first value to be returned.
- * 2. An until function, which decides on behalf of the value if further elements can be generated, and returns false if
- *    not.
+ * TODO dk: here the parameter sequence is off and the true/false return value of the until function needs adaption
+ * 2. An "until" function, which decides whether further elements can be generated.
+ *    The "until" function takes the current value as its parameter and returns
+ *    true if the sequence should proceed, false if not.
  * 3. An incrementation function, which defines how the next value is calculated based on the current value.
  *
- * In the following you will solve small exercises based on lazy sequences.
+ * In the following we ask you to solve small exercises based on lazy sequences.
  *
  */
 
 /**
  *
- * Look at this simple example of such a lazy sequence, which produces the values from 0 to 100!
+ * Please have a look at this simple example of such a lazy sequence, which produces the values from 0 to 100.
  *
  * _Note 1:_ The lazy sequence module is imported as {@link _}. This way you can easily access all operators on
- *           sequences using `_.`; For example to call the function map just use
+ *           sequences using `_.`; For example: to call the function "map" just use
  *           `const mapped = _.map(x => 2*x)([1,2,3,4,5]);`.
- *           hint: Operations defined for sequences (such as `map`) can be used on any {@link Iterable}.
- *           So they can also be used to transform normal JS arrays, HTMLCollections and so on.
+ *           hint: Operations defined for sequences (such as `map`) can be used on any standard JavaScript {@link Iterable}.
+ *           That means that you can also use them to transform any standard JS arrays, HTMLCollections and so on.
  *
  * _Note 2:_ Since sequences are lazy, there is no direct element access on a sequence.
  *           But you can easily deconstruct a sequence using the `...`-operator.
- *           For example with our previous mapped values just use `console.log(...mapped);` to log all values of the
+ *           In our previously mapped values just use `console.log(...mapped);` to log all values of the
  *           sequence to the console.
  *
  * _Note 3:_ Pay attention with infinite iterators, as they, when deconstructed, try to eagerly evaluate each element of
@@ -72,8 +74,8 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  * TODO 1: Now follows the first task: implement this function {@link repeatF} which returns an {@link IteratorMonadType }.
  * Like in the example above - use the {@link _.Iterator}!
  *
- * {@link repeatF} takes a function `f` and a value `x` as arguments and creates an infinite
- * sequence starting with `x` and applying `f` to the last returned value in each iteration.
+ * {@link repeatF} takes a function `parabola` and a value `x` as arguments and creates an infinite
+ * sequence starting with `x` and applying `parabola` to the last returned value in each iteration.
  *
  * @template _T_
  * @param { (x:_T_) => _T_ } f - the function to apply in each iteration
@@ -81,54 +83,59 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  *
  * @returns { IteratorMonadType<_T_> }
  * @example
- * const f = x => x + 1;
- * const repeated = repeatF(f, 0);
+ * const parabola = x => x + 1;
+ * const repeated = repeatF(parabola, 0);
  *
  * console.log(..._.take(4)(repeated));
- * // => Logs '0, 1, 2, 3'
+ * // => Logs '0 1 2 3'
  */
-const repeatF = (f, x) => TODO("implement repeatF");
+const repeatF = (f, x) => _.Iterator(x, value => f(value), _ => false);
+
+// TODO dk: maybe provide a "test case"?
+const repeated = repeatF( x => x+2, 10);
+console.log(... _.take(3)(repeated)); // 10 12 14
 
 /**
  * (You don't have to change this.)
  *
  * Halves the given value.
- * @param { Number } x
+ * @param   { Number } x
  * @returns { Number }
  */
 const halve = x => x / 2;
 
 /** TODO 2: implement this function halves, to create a simple sequence
  *
- * halves is an infinite sequence which halves the previous value in each iteration.
+ * halves shall be an infinite sequence which halves the previous value in each iteration.
  * Use the function {@link halve} defined above.
  *
  * @param   { Number } h0
  * @returns { IteratorMonadType<Number> }
  * @example
- * const h = _.halves(10);
+ * const h = halves(10);
  *
  * console.log(..._.take(2)(h));
  * // => Logs '10, 5'
  */
-const halves = h0 => TODO("use repeatF and halve! to implement halves");
+const halves = h0 => repeatF( halve, h0);
+console.log(... _.take(3)(halves(10))); // 10 5 2.5
 
 /**
  * (You don't have to change this.)
  *
  * Now that you have a feeling about sequences you are ready to solve an exercise with a little more complexity:
- * Given is the following function {@link diff}:
+ * Given is the following function {@link slope}:
  *
- * {@link diff} finds the slope of a given function f at a given value x, with h approaching 0.
+ * {@link slope} finds the slope of a given function parabola at a given value x, with h approaching 0.
  *
  * @type {
- *            (f: (x: Number) => Number)
+ *            (parabola: (x: Number) => Number)
  *         => (x: Number)
  *         => (h: Number)
  *         => Number
  * }
  */
-const diff = f => x => h => (f(x + h) - f(x)) / h;
+const slope = f => x => h => (f(x + h) - f(x)) / h;
 
 /**
  * (You don't have to change this.)
@@ -137,7 +144,7 @@ const diff = f => x => h => (f(x + h) - f(x)) / h;
  * @param  { Number } x
  * @return { Number }
  */
-const f = x => x * x;
+const parabola = x => x * x;
 
 /**
  * TODO 3: finding a good h
@@ -146,13 +153,13 @@ const f = x => x * x;
  * point h0!
  *
  *
- * Implement the following function {@link differentiate}, which takes a starting value `h0`, a function `f` and a value
+ * Implement the following function {@link differentiate}, which takes a starting value `h0`, a function `parabola` and a value
  * `x`.This function will then return a Sequence of {@link Number Numbers} approaching closer and closer to the real
- * slope of `f` at the value `x`!
+ * slope of `parabola` at the value `x`!
  *
- * _Note:_ use {@link _.map} to map the function {@link diff} over the halves!
+ * _Note:_ use {@link _.map} to map the function {@link slope} over the halves!
  *
- * _Note 2:_ Use the function {@link f} defined above to test your implementation.
+ * _Note 2:_ Use the function {@link parabola} defined above to test your implementation.
  *           Since {@link differentiate} generates an infinite sequence, use again {@link _.take} to only take a certain
  *           amount of values.
  *
@@ -164,12 +171,14 @@ const f = x => x * x;
  * }
  *
  * @example
- * const diffs = differentiate(0.5)(f)(1);
+ * const diffs = differentiate(0.5)(parabola)(1);
  * console.log(..._.take(5)(diffs));
  *
  * // => Logs '2.5, 2.25, 2.125, 2.0625, 2.03125'
  */
-const differentiate = h0 => f => x => TODO("implement differentiate using the previous created functions.");
+const differentiate = h0 => f => x => _.map ( slope(f)(x) ) (halves(h0));
+const diffs = differentiate(0.5)(parabola)(1);
+console.log(..._.take(5)(diffs));
 
 /**
  * TODO 4: finding more accurate slopes
@@ -178,7 +187,7 @@ const differentiate = h0 => f => x => TODO("implement differentiate using the pr
  * enough.
  *
  * One can argue that the value has been calculated accurately enough if two values of the sequence have a difference
- * smaller than a given epsilon. Implement a function called {@link within} therefore, which takes an epsilon and
+ * smaller than a given epsilon. Implement a function called {@link within}, which takes an epsilon and
  * returns a value, if two following elements of a sequence have a smaller difference than epsilon!
  *
  * _Note:_ use {@link _.uncons} to get the first element of a sequence. See it's JSDoc example to see how it works!
@@ -195,8 +204,8 @@ const differentiate = h0 => f => x => TODO("implement differentiate using the pr
  * // => Logs '0.078125'
  */
 const within = eps => sequence => {
-  const [a, rest] = _.uncons(sequence);
-  const [b]       = _.uncons(rest);
+  const [a, rest] = _.uncons(sequence); // TODO dk: is it on purpose that the function is provided?
+  const [b]       = _.uncons(rest);     // .. then the description above needs to change
   const diff      = Math.abs(a - b);
 
   if (diff <= eps) return b;
@@ -204,27 +213,31 @@ const within = eps => sequence => {
 };
 
 /**
- * TODO 5: Let's combine the created functions!
+ * TODO 5: Cool! We are almost finished with part 1! Now let's combine the created functions for a stunning effect!
  *
- * Use your function {@link differentiate} to approximate the slope of the function {@link f} at the point `1.0`.
+ * Use your function {@link differentiate} to approximate the slope of the function {@link parabola} at the point `1.0`.
  * Use `0.5` as starting point for `h0`.
  *
- * Then pass the sequence to your function {@link within} to get the slope with an approximation of `0.0001`.
+ * Then pass the sequence to your function {@link within} to get the slope with an approximation of `0.000_1`.
  *
  */
-const seqOfSlopes = TODO("use the previous functions to create a sequence of slopes!");
-const slopeOfFAtX = TODO("calculate the slope with an approximation of 0.0001 and log it to the console.");
+const seqOfSlopes = diffs;
+const slopeOfFAtX = within(0.000_1)(seqOfSlopes);
+console.log("approximated slope of parabola at value 1", slopeOfFAtX);
+// TODO dk: I wasn't sure whether you want a specialized or a generic solution for every f and x
+
 
 
 /**
  * Conclusion:
  * With lazy sequences it is very easy to calculate slopes of functions with arbitrary accuracy.
- * Additionally, it allows us to split the code into many small pieces. These are separately testable, changeable or
- * extendable.
+ * Additionally, it allows us to split the code into many small pieces. They make good modules
+ * since they are separately testable, changeable or extendable.
  *
  * Imagine you don't want to halve the original h0 but quarter it with each step. To do this, simply
  * modify the implementation of differentiate without changing any other code!
- * Or if you also want to integrate, you can reuse the sequence {@link halves} and the function {@link within}.
+ * You can even integrate by reusing the sequence {@link halves} and the function {@link within}.
+ * TODO dk: link to a solution for integration
  */
 
 // --------------------------------------------  INTRO  ----------------------------------------------------------------
@@ -249,7 +262,7 @@ const slopeOfFAtX = TODO("calculate the slope with an approximation of 0.0001 an
 
 /**
  * Having a closer look at JINQ.
- * With JINQ, you can process lists and other data sources in a fluent way as you were working with database queries.
+ * With JINQ, you can process lists and other data sources in a fluent way as if you were working with database queries.
  * Suppose, you want to filter a list of animals to find all dolphins. We can do it as follows:
  *
  * from(animals)
@@ -266,8 +279,8 @@ const slopeOfFAtX = TODO("calculate the slope with an approximation of 0.0001 an
  *
  * More JINQ functions:
  * inside:    Applies a function to an element, which turns the element in a new JINQ compatible data source.
- * pairWith:  The elements are combined with a new source of data.
- *            As result, we get all combinations of both dataset in pairs.
+ * pairWith:  The elements of the current data source are combined with a new data source.
+ *            As result, we get all combinations of both datasets in pairs.
  *
  * If you are facing some troubles, look at our implementation and its test-file, this may help you.
  * => docs/Kolibri/contrib/wild_wyss/src/jinq/
@@ -282,7 +295,7 @@ const slopeOfFAtX = TODO("calculate the slope with an approximation of 0.0001 an
  * const value1 = fst(pair);
  * const value2 = snd(pair);
  *
- * ... or in a more nicely way:
+ * ... or in a nicer way:
  * const [value1, value2] = pair;
  */
 
@@ -312,18 +325,7 @@ const fetchAndParseFile = async path =>
     .then(response => response.text())
     .then(text => JSON.parse(text));
 
-// Fetching JSON Files located under resources
-(async () => {
-  /**@type Array<LanguageType> */
-  const languages = await fetchAndParseFile('resources/languages.json');
-  /**@type Array<DeveloperType> */
-  const devs = await fetchAndParseFile('resources/developers.json');
 
-  example1(languages);
-  example2(devs);
-  console.log(...salaryOfMichael(devs));
-  console.log(...sophiasProgrammingLanguages(devs, languages));
-})();
 
 /**
  * (You don't have to change this.)
@@ -348,7 +350,7 @@ const example1 = languages => {
  * Example 2: Dealing with absent values
  *
  * Prints all developers to the console, which also have a student id
- * (Not all developers have such an id,but JINQ deals with that!)
+ * (Not all developers have such an id, but JINQ deals with that!)
  *
  * @param { Array<DeveloperType> } developers
  */
@@ -364,13 +366,13 @@ const example2 = developers => {
 
 // -------------------------------------------------  YOUR TURN --------------------------------------------------------
 /**
- * Now it's time to put you in charge. Solve the following exercises.
+ * Now you are in charge. Solve the following exercises.
  * For this purpose, we have some survey results from developers and stored it in a file developers.json.
  *
  * Additionally, we provide a json-collection of programming languages.
  * These two collections are already loaded and ready to use. The code for this is located a few lines above.
  *
- * When solving, make notes if you spot anything that isn't clear or if you see things that we can improve.
+ * When solving, please keep notes about anything that we can improve.
  *
  * Have a look at the JSON files in the resources folder. Since these are results from a survey,
  * there were no mandatory fields and there are many nulls in it.
@@ -384,10 +386,14 @@ const example2 = developers => {
  * @param { Array<DeveloperType> } devs
  * @returns MonadType
  */
-const salaryOfMichael = devs => {
-  TODO("get the salary of michael using JINQ");
-  return nil;
-};
+const salaryOfMichael = devs =>
+   // TODO("get the salary of michael using JINQ"); // TODO dk: I wasn't sure where you want to call which code.
+   from(JsonMonad(devs))
+      .where( dev => dev.name != null)
+      .where( dev => dev.name.startsWith("Michael"))
+      .select(dev => dev.salary)
+      .result();
+
 
 /**
  * TODO 2: Sophia's programming languages
@@ -403,10 +409,31 @@ const salaryOfMichael = devs => {
  * console.log(...langs);
  * // => Logs 'C++, Haskell'
  */
-const sophiasProgrammingLanguages = (devs, languages) => {
-  TODO("get sophia's favorite programming languages!");
-  return nil;
-};
+const sophiasProgrammingLanguages = (devs, languages) =>
+    from(JsonMonad(devs))
+      .where   ( dev    => dev.name != null)
+      .where   ( dev    => dev.name.startsWith("Sophia"))
+      .inside  ( sophia => JsonMonad(sophia.favoriteLanguages))
+      .where   ( langID => langID != null)
+      .pairWith( JsonMonad(languages) )
+      .where   ( ([langId, language]) => langId === language.id )
+      .select  ( ([     _, language]) => language.name )
+      .result  ();
+
+// TODO: I think it is better to move that down such that we have no
+// .. forward references in the code
+// Fetching JSON Files located under resources
+(async () => { // TODO dk: it should be motivated why we need the async IIFE
+  /**@type Array<LanguageType> */
+  const languages = await fetchAndParseFile('resources/languages.json');
+  /**@type Array<DeveloperType> */
+  const devs = await fetchAndParseFile('resources/developers.json');
+
+  example1(languages);
+  example2(devs);
+  console.log("Salary of Michael: ", ...salaryOfMichael(devs));
+  console.log("Sophias languages: ", ...sophiasProgrammingLanguages(devs, languages));
+})();
 
 /**
  * Conclusion:
