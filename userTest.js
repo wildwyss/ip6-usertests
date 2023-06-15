@@ -20,11 +20,13 @@ const TODO = data => console.log("TODO:", data); // we will use this later; don'
 const assert = (actual, expected, name) => {
   const bothIterable = isIterable(actual) && expected;
   let equal = actual === expected;
+
   if (bothIterable) {
-    actual = [..._.take(10)(actual)];
-    expected = [..._.take(10)(expected)];
+    actual   = [..._.take(3)(actual)];
+    expected = [..._.take(3)(expected)];
     equal = arrayEq(actual)(expected);
   }
+
   if (equal) {
     console.log(`OK: ${name}`);
   } else {
@@ -113,9 +115,9 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
 const repeatF = (f, x) => TODO("implement repeatF");
 
 
-// Your solution will be tested against:
+// Your solution will be tested against the three fist values of the resulting sequence:
 assert(
-  _.take(3) ( repeatF(x => x + 2, 10) ),
+  repeatF(x => x + 2, 10),
   [10,12,14],
   "repeatF"
 );
@@ -144,9 +146,9 @@ const halve = x => x / 2;
  */
 const halves = h0 => TODO("use repeatF and halve! to implement halves");
 
-// Your solution will be tested against:
+// Your solution will be tested against the three fist values of the resulting sequence:
 assert(
-  _.take(3)( halves(10) ),
+  halves(10),
   [10, 5, 2.5],
   "halves"
 );
@@ -209,10 +211,10 @@ const parabola = x => x * x;
  */
 const differentiate = h0 => f => x => TODO("implement differentiate using the previous created functions.");
 
-// Your solution will be tested against:
+// Your solution will be tested against the three fist values of the resulting sequence:
 const diffs = differentiate(0.5)(parabola)(1);
 assert(
-  _.take(3)( diffs ),
+  diffs,
   [2.5, 2.25, 2.125],
   "differentiate"
 );
@@ -416,7 +418,7 @@ const example2 = developers => {
  * console.log(...salary);
  * // => Logs '70000'
  */
-const salaryOfMichael = devs => TODO("get the salary of michael using JINQ");
+const salaryOfMichael = devs => ["TODO: get the salary of michael using JINQ"];
 
 // salaryOfMichael gets evaluated at the end of the file. 'Salary of Michael: 70000'
 // will be printed to the console if everything is ok.
@@ -435,7 +437,7 @@ const salaryOfMichael = devs => TODO("get the salary of michael using JINQ");
  * console.log(...langs);
  * // => Logs 'C++, Haskell'
  */
-const sophiasProgrammingLanguages = (devs, languages) => TODO("get sophia's favorite programming languages!");
+const sophiasProgrammingLanguages = (devs, languages) => ["TODO: get sophia's favorite programming languages!"];
 
 // sophiasProgrammingLanguages gets evaluated at the end of the file. 'Sophias languages: C++, Haskell'
 // will be printed to the console if everything is ok.

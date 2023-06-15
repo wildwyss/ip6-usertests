@@ -89,7 +89,7 @@ const JsonMonad = jsObject => {
     const iterator = () => {
       let inner;
      maybeObj
-      (() => inner = nil)
+      (() => inner = nil())
       (it => inner = it);
 
       return iteratorOf(inner);
