@@ -452,7 +452,7 @@ const salaryOfMichael = devs =>
 const sophiasProgrammingLanguages = (devs, languages) =>
     from(JsonMonad(devs))
       .where   ( dev    => dev.name === "Sophia Davis")
-      .map     ( sophia => sophia.favoriteLanguages)
+      .select     ( sophia => sophia.favoriteLanguages)
       .pairWith( JsonMonad(languages) )
       .where   ( ([langId, language]) => langId === language.id )
       .select  ( ([     _, language]) => language.name )
