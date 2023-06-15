@@ -1,7 +1,8 @@
-import { from }      from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
-import { JsonMonad } from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
-import * as _        from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
-import { nil }       from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
+import { from }       from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
+import { JsonMonad }  from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
+import * as _         from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
+import { arrayEq }    from "./Kolibri/docs/src/kolibri/util/arrayFunctions.js";
+import { isIterable } from "./Kolibri/contrib/wild_wyss/src/iterator/util/util.js";
 
 /**
  * Utility function that helps to find your way through the examples.
@@ -9,6 +10,27 @@ import { nil }       from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js"
  */
 const TODO = data => console.log("TODO:", data); // we will use this later; don't worry for now
 
+/**
+ * Utility function to check the results of your test.
+ * @template _T_
+ * @param { Array<*> | Iterable<*> | _T_ } actual
+ * @param { Array<*> | Iterable<*> | _T_ } expected
+ * @param { String }              name
+ */
+const assert = (actual, expected, name) => {
+  const bothIterable = isIterable(actual) && expected;
+  let equal = actual === expected;
+  if (bothIterable) {
+    actual = [..._.take(10)(actual)];
+    expected = [..._.take(10)(expected)];
+    equal = arrayEq(actual)(expected);
+  }
+  if (equal) {
+    console.log(`OK: ${name}`);
+  } else {
+    console.error(`${name}: not working yet! Expected: ${expected}, but got ${actual}`);
+  }
+};
 // --------------------------------------------  INTRO  ----------------------------------------------------------------
 
 /**
@@ -34,8 +56,7 @@ const TODO = data => console.log("TODO:", data); // we will use this later; don'
  * Therefore, lazy sequences can provide a large - even infinite - amount of values.
  *
  * Such sequences can be created using a constructor, taking three values:
- * 1. An initial value, which is the first value to be returned.
- * TODO dk: here the parameter sequence is off and the true/false return value of the until function needs adaption
+ * 1. An initial value, which is the first value to be held by this sequence
  * 2. An "until" function, which decides whether further elements can be generated.
  *    The "until" function takes the current value as its parameter and returns
  *    true if the sequence should proceed, false if not.
@@ -74,8 +95,8 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  * TODO 1: Now follows the first task: implement this function {@link repeatF} which returns an {@link IteratorMonadType }.
  * Like in the example above - use the {@link _.Iterator}!
  *
- * {@link repeatF} takes a function `parabola` and a value `x` as arguments and creates an infinite
- * sequence starting with `x` and applying `parabola` to the last returned value in each iteration.
+ * {@link repeatF} takes a function `f` and a value `x` as arguments and creates an infinite
+ * sequence starting with `x` and applying `f` to the last returned value in each iteration.
  *
  * @template _T_
  * @param { (x:_T_) => _T_ } f - the function to apply in each iteration
@@ -89,11 +110,15 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  * console.log(..._.take(4)(repeated));
  * // => Logs '0 1 2 3'
  */
-const repeatF = (f, x) => _.Iterator(x, value => f(value), _ => false);
+const repeatF = (f, x) => _.Iterator(x, f, _ => false);
 
-// TODO dk: maybe provide a "test case"?
-const repeated = repeatF( x => x+2, 10);
-console.log(... _.take(3)(repeated)); // 10 12 14
+
+// Your solution will be tested against:
+assert(
+  _.take(3) ( repeatF(x => x + 2, 10) ),
+  [10,12,14],
+  "repeatF"
+);
 
 /**
  * (You don't have to change this.)
@@ -118,7 +143,13 @@ const halve = x => x / 2;
  * // => Logs '10, 5'
  */
 const halves = h0 => repeatF( halve, h0);
-console.log(... _.take(3)(halves(10))); // 10 5 2.5
+
+// Your solution will be tested against:
+assert(
+  _.take(3)( halves(10) ),
+  [10, 5, 2.5],
+  "halves"
+);
 
 /**
  * (You don't have to change this.)
@@ -177,8 +208,14 @@ const parabola = x => x * x;
  * // => Logs '2.5, 2.25, 2.125, 2.0625, 2.03125'
  */
 const differentiate = h0 => f => x => _.map ( slope(f)(x) ) (halves(h0));
+
+// Your solution will be tested against:
 const diffs = differentiate(0.5)(parabola)(1);
-console.log(..._.take(5)(diffs));
+assert(
+  _.take(3)( diffs ),
+  [2.5, 2.25, 2.125],
+  "differentiate"
+);
 
 /**
  * TODO 4: finding more accurate slopes
@@ -204,13 +241,21 @@ console.log(..._.take(5)(diffs));
  * // => Logs '0.078125'
  */
 const within = eps => sequence => {
-  const [a, rest] = _.uncons(sequence); // TODO dk: is it on purpose that the function is provided?
-  const [b]       = _.uncons(rest);     // .. then the description above needs to change
+  const [a, rest] = _.uncons(sequence);
+  const [b]       = _.uncons(rest);
   const diff      = Math.abs(a - b);
 
   if (diff <= eps) return b;
   return within(eps)(rest);
 };
+
+// Your solution will be tested against:
+const smallDifference = within(0.1)(halves(10));
+assert(
+  smallDifference,
+  0.078125,
+  "within"
+);
 
 /**
  * TODO 5: Cool! We are almost finished with part 1! Now let's combine the created functions for a stunning effect!
@@ -221,12 +266,13 @@ const within = eps => sequence => {
  * Then pass the sequence to your function {@link within} to get the slope with an approximation of `0.000_1`.
  *
  */
-const seqOfSlopes = diffs;
-const slopeOfFAtX = within(0.000_1)(seqOfSlopes);
-console.log("approximated slope of parabola at value 1", slopeOfFAtX);
-// TODO dk: I wasn't sure whether you want a specialized or a generic solution for every f and x
+const slopeOfFAtX = within(0.000_1)(diffs);
 
-
+// Your solution will be tested against:
+assert(
+  slopeOfFAtX,
+  2.00006103515625,
+  "Approximated Slope");
 
 /**
  * Conclusion:
@@ -237,10 +283,13 @@ console.log("approximated slope of parabola at value 1", slopeOfFAtX);
  * Imagine you don't want to halve the original h0 but quarter it with each step. To do this, simply
  * modify the implementation of differentiate without changing any other code!
  * You can even integrate by reusing the sequence {@link halves} and the function {@link within}.
- * TODO dk: link to a solution for integration
+ *
+ * An example how this works for integration can be found at:
+ * https://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf in the chapter 4.3 "Numerical Integration"
+ *
  */
 
-// --------------------------------------------  INTRO  ----------------------------------------------------------------
+// --------------------------------------------  PART II  --------------------------------------------------------------
 /**
  * INTRO - User-test Part 2
  *
@@ -278,12 +327,12 @@ console.log("approximated slope of parabola at value 1", slopeOfFAtX);
  * result: Returns a new datasource based on the previous operations.
  *
  * More JINQ functions:
- * inside:    Applies a function to an element, which turns the element in a new JINQ compatible data source.
- * pairWith:  The elements of the current data source are combined with a new data source.
+ * inside:    Applies a function `f` to each element. `f` turns the element in a new JINQ compatible data source.
+ * pairWith:  The elements of the current data source are combined with a new JINQ compatible data source.
  *            As result, we get all combinations of both datasets in pairs.
  *
  * If you are facing some troubles, look at our implementation and its test-file, this may help you.
- * => docs/Kolibri/contrib/wild_wyss/src/jinq/
+ * => Kolibri/contrib/wild_wyss/src/jinq/
  *
  * Working with pairs:
  * A pair represents an immutable data structure holding exactly two values.
@@ -291,7 +340,7 @@ console.log("approximated slope of parabola at value 1", slopeOfFAtX);
  * Create a pair using the following syntax:
  * const pair = Pair("first")("second");
  *
- * A value from a pair can be received using:
+ * The values from a pair can be received using:
  * const value1 = fst(pair);
  * const value2 = snd(pair);
  *
@@ -310,27 +359,10 @@ console.log("approximated slope of parabola at value 1", slopeOfFAtX);
 
 // ------------------------------------------------  Examples ----------------------------------------------------------
 
-// Functions to load a json file.
-
 /**
  * (You don't have to change this.)
  *
- * Loads a file from the given path.
- * @template _T_
- * @param { String } path - path to file
- * @return { Promise<_T_> }
- */
-const fetchAndParseFile = async path =>
-  fetch(path)
-    .then(response => response.text())
-    .then(text => JSON.parse(text));
-
-
-
-/**
- * (You don't have to change this.)
- *
- * Example 1: How to work with jinq and maybe
+ * Example 1: How to work with jinq
  *
  * Prints all programming language id's to the console.
  * @param {Array<LanguageType>} languages - programming languages
@@ -339,9 +371,9 @@ const example1 = languages => {
   const allIds =
     from(JsonMonad(languages))
       .select(x => x['id'])
-      .result();
+      .result(); // unwrap JsonMonad again
 
-  console.log("language ids: ", ...allIds);
+  console.log("language ids: ", ...allIds); // JsonMonad is iterable
 };
 
 /**
@@ -367,10 +399,10 @@ const example2 = developers => {
 // -------------------------------------------------  YOUR TURN --------------------------------------------------------
 /**
  * Now you are in charge. Solve the following exercises.
- * For this purpose, we have some survey results from developers and stored it in a file developers.json.
+ * For this purpose, we have some survey results from developers and stored it in a file resources/developers.json.
  *
- * Additionally, we provide a json-collection of programming languages.
- * These two collections are already loaded and ready to use. The code for this is located a few lines above.
+ * Additionally, we provide a json-collection of programming languages (resources/languages.json).
+ * These two collections are already loaded and ready to use. The code for this is located at the end of the file.
  *
  * When solving, please keep notes about anything that we can improve.
  *
@@ -382,18 +414,24 @@ const example2 = developers => {
 
 /**
  * TODO 1: Salary of Michael
- * Find the salary from Michael using the given Json-data called 'developers' and print it to the console.
+ * Find the salary of Michael using the given Json-data called 'developers' and print it to the console.
  * @param { Array<DeveloperType> } devs
  * @returns MonadType
+ *
+ * @example
+ * const salary = salaryOfMichael(devs);
+ * console.log(...salary);
+ * // => Logs '70000'
  */
 const salaryOfMichael = devs =>
-   // TODO("get the salary of michael using JINQ"); // TODO dk: I wasn't sure where you want to call which code.
    from(JsonMonad(devs))
       .where( dev => dev.name != null)
       .where( dev => dev.name.startsWith("Michael"))
       .select(dev => dev.salary)
       .result();
 
+// salaryOfMichael gets evaluated at the end of the file. 'Salary of Michael: 70000'
+// will be printed to the console if everything is ok.
 
 /**
  * TODO 2: Sophia's programming languages
@@ -411,29 +449,15 @@ const salaryOfMichael = devs =>
  */
 const sophiasProgrammingLanguages = (devs, languages) =>
     from(JsonMonad(devs))
-      .where   ( dev    => dev.name != null)
-      .where   ( dev    => dev.name.startsWith("Sophia"))
-      .inside  ( sophia => JsonMonad(sophia.favoriteLanguages))
-      .where   ( langID => langID != null)
+      .where   ( dev    => dev.name === "Sophia Davis")
+      .map     ( sophia => sophia.favoriteLanguages)
       .pairWith( JsonMonad(languages) )
       .where   ( ([langId, language]) => langId === language.id )
       .select  ( ([     _, language]) => language.name )
       .result  ();
 
-// TODO: I think it is better to move that down such that we have no
-// .. forward references in the code
-// Fetching JSON Files located under resources
-(async () => { // TODO dk: it should be motivated why we need the async IIFE
-  /**@type Array<LanguageType> */
-  const languages = await fetchAndParseFile('resources/languages.json');
-  /**@type Array<DeveloperType> */
-  const devs = await fetchAndParseFile('resources/developers.json');
-
-  example1(languages);
-  example2(devs);
-  console.log("Salary of Michael: ", ...salaryOfMichael(devs));
-  console.log("Sophias languages: ", ...sophiasProgrammingLanguages(devs, languages));
-})();
+// sophiasProgrammingLanguages gets evaluated at the end of the file. 'Sophias languages: C++, Haskell'
+// will be printed to the console if everything is ok.
 
 /**
  * Conclusion:
@@ -449,3 +473,38 @@ const sophiasProgrammingLanguages = (devs, languages) =>
  *
  * Isn't that great?
  */
+
+
+
+
+// --------------------------------------------  Functions to load a json file --------------------------------------------------------------
+/**
+ * (You don't have to change this.)
+ *
+ * Loads a file from the given path.
+ * @template _T_
+ * @param { String } path - path to file
+ * @return { Promise<_T_> }
+ */
+const fetchAndParseFile = async path =>
+  fetch(path)
+    .then(response => response.text())
+    .then(text => JSON.parse(text));
+
+
+/**
+ * Fetches json files asynchronously.
+ * This function will be executed immediately and run all JINQ code.
+ */
+(async () => {
+  /**@type Array<LanguageType> */
+  const languages = await fetchAndParseFile('resources/languages.json');
+  /**@type Array<DeveloperType> */
+  const devs = await fetchAndParseFile('resources/developers.json');
+
+  example1(languages);
+  example2(devs);
+  console.log("Salary of Michael: ", ...salaryOfMichael(devs));
+  console.log("Sophias languages: ", ...sophiasProgrammingLanguages(devs, languages));
+})();
+
