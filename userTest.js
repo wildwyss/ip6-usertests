@@ -476,7 +476,8 @@ const fetchAndParseFile = async path =>
 
 /**
  * Fetches json files asynchronously.
- * This function will be executed immediately and run all JINQ code.
+ * This function will be started immediately and run all JINQ code
+ * after the json files have been fetched and parsed.
  */
 (async () => {
   /**@type Array<LanguageType> */
