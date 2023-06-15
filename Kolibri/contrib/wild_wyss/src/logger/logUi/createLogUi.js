@@ -4,7 +4,7 @@ import { dom }                    from "../../../../../docs/src/kolibri/util/dom
 import { shadowCss }              from "../../../../../docs/src/kolibri/style/kolibriStyle.js";
 import { LogUiController }        from "./logUiController.js";
 import { setLoggingContext }       from "../logger.js";
-import { projectDebounceInput }   from "../../debounceInput/simpleInputProjector.js";
+import { projectDebounceInput }   from "./../../debounceInput/simpleInputProjector.js";
 import { SimpleInputController }  from "../../../../../docs/src/kolibri/projector/simpleForm/simpleInputController.js";
 import { loggingSelectProjector } from "./logUiProjector.js";
 import { LogMessagesView, projectLogLevelControls } from "./logView.js";

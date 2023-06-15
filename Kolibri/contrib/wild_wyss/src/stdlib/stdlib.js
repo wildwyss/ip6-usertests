@@ -7,7 +7,7 @@ export { catMaybes, choiceMaybe }
  * @template _U_
  * @haskell [Maybe a] -> [a]
  * @param  { Array<MaybeType<_T_, _U_>> } maybes
- * @return { Array<_T_> }
+ * @returns { Array<_T_> }
  */
 const catMaybes = maybes => {
   const result = [];
@@ -36,7 +36,7 @@ const catMaybes = maybes => {
  * const choice1 = choiceMaybe(just)(nothing)
  * const choice2 = choiceMaybe(nothing)(just)
  * console.log(choice1 === just && choice2 === just);
- *   // => logs true
+ * // => Logs 'true'
  */
 const choiceMaybe = maybe1 => maybe2 =>
   maybe1

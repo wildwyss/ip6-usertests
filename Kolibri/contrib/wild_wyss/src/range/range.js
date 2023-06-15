@@ -1,4 +1,4 @@
-import { Iterator } from "../iterator/iterator.js";
+import { Sequence } from "../sequence/sequence.js";
 
 export { Range }
 
@@ -14,32 +14,34 @@ export { Range }
  * - Zero step size leads to infinite loops.
  * - Only values that behave correctly with respect to addition and
  *   size comparison may be passed as arguments.
+ *
  * @constructor
+ * @pure
  * @param { !Number } firstBoundary  - the first boundary of the range
  * @param { Number }  secondBoundary - optionally the second boundary of the range
  * @param { Number }  step - the size of a step, processed during each iteration
- * @returns IteratorMonadType<Number>
+ * @returns SequenceType<Number>
+ *
  * @example
- *  const [zero, one, two, three] = Range(3);
- *  const [five, three, one]      = Range(1, 5, -2);
- *  const [three, four, five]     = Range(5, 3);
+ *  const range               = Range(3);
+ *  const [five, three, one]  = Range(1, 5, -2);
+ *  const [three, four, five] = Range(5, 3);
+ *
+ *  console.log(...range);
+ *  // => Logs '0, 1, 2, 3'
  */
 const Range = (firstBoundary, secondBoundary = 0, step = 1) => {
   const stepIsNegative = 0 > step;
   const [left, right]  = normalize(firstBoundary, secondBoundary, stepIsNegative);
 
-  return Iterator(
-    left,
-    value => value + step,
-    value => hasReachedEnd(stepIsNegative, value, right)
-  );
+  return Sequence(left, value => hasReachedEnd(stepIsNegative, value, right), value => value + step);
 };
 
 /**
  * Sorts the two parameter a and b by its magnitude.
  * @param  { Number } a
  * @param  { Number } b
- * @return { [Number, Number] }
+ * @returns { [Number, Number] }
  */
 const sort = (a, b) => {
   if (a < b) return [a,b];
@@ -51,10 +53,10 @@ const sort = (a, b) => {
  * @param   { Boolean } stepIsNegative - signals, which range boundary condition is active
  * @param   { Number }  next
  * @param   { Number }  end
- * @return  { boolean }
+ * @returns  { boolean }
  */
 const hasReachedEnd = (stepIsNegative, next, end) =>
-    stepIsNegative ? next < end : next > end;
+    stepIsNegative ? next >= end : next <= end;
 
 /**
  * Make sure, that the left and right values
@@ -62,7 +64,7 @@ const hasReachedEnd = (stepIsNegative, next, end) =>
  * @param   { Number }  left
  * @param   { Number }  right
  * @param   { Boolean } stepIsNegative
- * @return  { [Number, Number] }
+ * @returns  { [Number, Number] }
  */
 const normalize = (left, right, stepIsNegative) => {
   const [min, max] = sort(left, right);

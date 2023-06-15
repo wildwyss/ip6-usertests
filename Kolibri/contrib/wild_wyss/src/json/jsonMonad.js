@@ -1,12 +1,12 @@
-import { Just, Nothing } from "../stdlib/maybe.js";
-import { nil }           from "../iterator/constructors/nil/nil.js";
-import { isEmpty }       from "../iterator/terminalOperations/isEmpty/isEmpty.js";
-import { PureIterator }  from "../iterator/constructors/pureIterator/pureIterator.js";
+import { Just, Nothing }                     from "../stdlib/maybe.js";
+import { createMonadicSequence, iteratorOf } from "../sequence/util/util.js";
 import {
+  PureSequence,
+  nil,
+  isEmpty,
   catMaybes,
-  mconcat
-} from "../iterator/iterator.js"
-import {createIterator, createMonadicIterable, iteratorOf} from "../iterator/util/util.js";
+  mconcat,
+} from "../sequence/sequence.js";
 
 export { JsonMonad }
 
@@ -14,17 +14,20 @@ export { JsonMonad }
  * This {@link JsonMonad} can be used to process JSON data or JS objects in a fluent way.
  * It is mainly used with {@link JinqType}.
  * @see https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/
+ *
+ * @constructor
  * @template _T_
  * @param { Object | Array<_T_> } jsObject
  * @returns MonadType<_T_>
- * @constructor
+ *
  * @example
  * const result =
  *    from(JsonMonad(jsObject))
  *      .select(x => x["id"])
  *      .result()
  *      .get();
- * console.log(result);
+ *
+ * console.log(...result);
  * // => Logs all ids of the passed json
  *
  */
@@ -37,7 +40,7 @@ const JsonMonad = jsObject => {
   /**
    *
    * @template _T_
-   * @param { MaybeType<IteratorMonadType<_T_>> & MaybeMonadType<_T_> } maybeObj
+   * @param { MaybeType<SequenceType<_T_>> & MaybeMonadType<_T_> } maybeObj
    * @returns { MonadType<_T_> }
    * @constructor
    */
@@ -53,7 +56,7 @@ const JsonMonad = jsObject => {
       const result = maybeObj.and(iterator => {
         const newIt = iterator.and(elem => {
           const mapped = f(elem); // deep dive into json structure
-          return mapped ? ensureIterable(mapped) : nil;
+          return mapped ? ensureIterable(mapped) : nil();
         });
 
         return isEmpty(newIt) ? Nothing : Just(newIt);
@@ -64,23 +67,23 @@ const JsonMonad = jsObject => {
     };
 
     const and = f => {
-      // Map each element of this iterator, that might be in this maybe
-      const result = maybeObj.fmap(iterator => {
-        const maybeIterators = iterator.fmap(elem => {
-          // f :: _T_ -> JsonMonad<IteratorMonadType<MaybeXType<_T_>>>
+      // Map each element of this iterable, that might be in this maybe
+      const result = maybeObj.fmap(iterable => {
+        const maybeIterable = iterable.fmap(elem => {
+          // f :: _T_ -> JsonMonad<SequenceType<MaybeXType<_T_>>>
           const jsonMonad = f(elem);
-          return jsonMonad.get(); // unwrap the JsonMonad to access the iterator in it.
+          return jsonMonad.get(); // unwrap the JsonMonad to access the iterable in it.
         });
 
-        /**@type IteratorMonadType<IteratorMonadType> */
-        const catted = /**@type any */catMaybes(maybeIterators);
+        /**@type SequenceType<SequenceType> */
+        const catted = /**@type any */catMaybes(maybeIterable);
         return mconcat(catted)
       });
 
       return JsonMonadFactory(result);
     };
 
-    const pure  = a  => JsonMonad(PureIterator(a));
+    const pure  = a  => JsonMonad(PureSequence(a));
     const empty = () => JsonMonadFactory(Nothing);
 
     const iterator = () => {
@@ -107,12 +110,12 @@ const JsonMonad = jsObject => {
 
 
 /**
- * Helper function to create an {@link IteratorMonadType} from varargs.
- *
+ * Helper function to create a {@link SequenceType} from varargs.
  * {@link toMonadicIterable } can't be used here, because sub iterables shouldn't be consumed
+ *
  * @template _T_
  * @param  { ..._T_ } elements - the elements to iterate on
- * @returns {IteratorMonadType<*>}
+ * @returns { SequenceType<*> }
  */
 const innerIterable = (...elements) => {
   const iterator = () => {
@@ -121,5 +124,5 @@ const innerIterable = (...elements) => {
     const next = () => inner.next();
     return { next };
   };
-  return createMonadicIterable(iterator);
+  return createMonadicSequence(iterator);
 };

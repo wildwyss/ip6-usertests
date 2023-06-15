@@ -1,4 +1,4 @@
-import { total } from "./src/test/test.js";
+import { total }       from "./src/test/test.js";
 import { versionInfo } from "../../docs/src/kolibri/version.js";
 
 // logger
@@ -9,11 +9,11 @@ import "./src/logger/appender/consoleAppenderTest.js";
 import "./src/logger/appender/observableAppenderTest.js";
 import "./src/logger/logUi/logUiControllerTest.js";
 
-// iterator
-import "./src/iterator/constructors/constructorTest.js";
-import "./src/iterator/operators/operatorsTest.js";
-import "./src/iterator/terminalOperations/terminalOperationsTest.js";
-import "./src/iterator/iteratorBuilderTest.js";
+// sequence
+import "./src/sequence/constructors/constructorTest.js";
+import "./src/sequence/operators/operatorsTest.js";
+import "./src/sequence/terminalOperations/terminalOperationsTest.js";
+import "./src/sequence/sequenceBuilderTest.js";
 
 // range
 import "./src/range/rangeTest.js";

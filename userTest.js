@@ -1,8 +1,8 @@
 import { from }       from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
 import { JsonMonad }  from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
-import * as _         from "./Kolibri/contrib/wild_wyss/src/iterator/iterator.js";
+import * as _         from "./Kolibri/contrib/wild_wyss/src/sequence/sequence.js";
 import { arrayEq }    from "./Kolibri/docs/src/kolibri/util/arrayFunctions.js";
-import { isIterable } from "./Kolibri/contrib/wild_wyss/src/iterator/util/util.js";
+import { isIterable } from "./Kolibri/contrib/wild_wyss/src/sequence/util/util.js";
 
 /**
  * Utility function that helps to find your way through the examples.
@@ -85,15 +85,15 @@ const assert = (actual, expected, name) => {
  *           the sequence. This will go on forever and your browser will not respond anymore. Use {@link _.take} to only
  *           evaluate a certain amount of values.
  *
- * @type { IteratorMonadType<Number> }
+ * @type { SequenceType<Number> }
  *
  */
-const seq1 = _.Iterator(0, i => i + 1, i => i > 100);
+const seq1 = _.Sequence(0, i => i <= 100, i => i + 1);
 console.log("A simple sequence from 0 to 100:", ...seq1);
 
 /**
- * TODO 1: Now follows the first task: implement this function {@link repeatF} which returns an {@link IteratorMonadType }.
- * Like in the example above - use the {@link _.Iterator}!
+ * TODO 1: Now follows the first task: implement this function {@link repeatF} which returns a {@link SequenceType}.
+ * Like in the example above - use the {@link _.Sequence}!
  *
  * {@link repeatF} takes a function `f` and a value `x` as arguments and creates an infinite
  * sequence starting with `x` and applying `f` to the last returned value in each iteration.
@@ -102,7 +102,7 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  * @param { (x:_T_) => _T_ } f - the function to apply in each iteration
  * @param { _T_ } x            - the initial value
  *
- * @returns { IteratorMonadType<_T_> }
+ * @returns { SequenceType<_T_> }
  * @example
  * const parabola = x => x + 1;
  * const repeated = repeatF(parabola, 0);
@@ -110,7 +110,7 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  * console.log(..._.take(4)(repeated));
  * // => Logs '0 1 2 3'
  */
-const repeatF = (f, x) => _.Iterator(x, f, _ => false);
+const repeatF = (f, x) => _.Sequence(x, _ => true, f);
 
 
 // Your solution will be tested against:
@@ -135,7 +135,7 @@ const halve = x => x / 2;
  * Use the function {@link halve} defined above.
  *
  * @param   { Number } h0
- * @returns { IteratorMonadType<Number> }
+ * @returns { SequenceType<Number> }
  * @example
  * const h = halves(10);
  *
@@ -198,7 +198,7 @@ const parabola = x => x * x;
  *          (h0: Number)
  *       => (f: (x: Number) => Number)
  *       => (x: Number)
- *       => IteratorMonadType<Number>
+ *       => SequenceType<Number>
  * }
  *
  * @example
@@ -231,7 +231,7 @@ assert(
  *
  * @type {
  *      (eps: Number)
- *   => (sequence: IteratorMonadType<Number>)
+ *   => (sequence: SequenceType<Number>)
  *   => Number
  * }
  *
@@ -466,7 +466,7 @@ const sophiasProgrammingLanguages = (devs, languages) =>
  * Since JINQ only operates on this monadic interface, every object or data structures complying to this monadic
  * interface can be processed using JINQ!
  *
- * {@link IteratorMonadType} complies to this monadic interface as well and can therefore be processed using JINQ.
+ * {@link SequenceType} complies to this monadic interface as well and can therefore be processed using JINQ.
  *
  * This means, you can enhance any data structure in this way and use it with JINQ, without changing the implementation
  * of JINQ!
@@ -507,4 +507,3 @@ const fetchAndParseFile = async path =>
   console.log("Salary of Michael: ", ...salaryOfMichael(devs));
   console.log("Sophias languages: ", ...sophiasProgrammingLanguages(devs, languages));
 })();
-

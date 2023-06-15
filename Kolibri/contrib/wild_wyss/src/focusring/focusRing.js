@@ -1,5 +1,4 @@
 import {
-  ArrayIterator,
   nil,
   reverse$,
   cons,
@@ -7,29 +6,31 @@ import {
   eq$,
   head,
   isEmpty,
-} from "../iterator/iterator.js"
+} from "../sequence/sequence.js"
 
 export { FocusRing }
 
 /**
  * Constructs a new immutable focus ring.
- * @template _T_
- * @param   { !Iterable<_T_> } nonEmptyIterator - A finite iterator which has at least one element.
- * @returns { FocusRingType<_T_> }
+ *
  * @constructor
+ * @template _T_
+ * @param   { !Iterable<_T_> } nonEmptyIterable - A finite {@link Iterable} which has at least one element.
+ * @returns { FocusRingType<_T_> }
  */
-const FocusRing = nonEmptyIterator => FocusRingInternal(
+const FocusRing = nonEmptyIterable => FocusRingInternal(
   nil,
-  nonEmptyIterator
+  nonEmptyIterable
 );
 
 /**
- * Constructs a new immutable focus ring using the given iterators.
- * @template _T_
- * @param   { !Iterable<_T_> } pre  - a finite iterator
- * @param   { !Iterable<_T_> } post - a finite iterator which has at least one element, it's head is the focus.
- * @returns { FocusRingType<_T_> }
+ * Constructs a new immutable focus ring using the given {@link Iterable}.
+ *
  * @constructor
+ * @template _T_
+ * @param   { !Iterable<_T_> } pre  - a finite iterable
+ * @param   { !Iterable<_T_> } post - a finite iterable which has at least one element, it's head is the focus.
+ * @returns { FocusRingType<_T_> }
  */
 const FocusRingInternal = (pre, post) => {
   const focus = () => head(post);
@@ -44,7 +45,7 @@ const FocusRingInternal = (pre, post) => {
         return FocusRingInternal(pre, post);
       }
       return FocusRingInternal(
-        ArrayIterator([currentFocus]),
+        [currentFocus],
         reverse$(pre)
       );
     }
