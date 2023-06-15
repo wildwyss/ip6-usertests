@@ -13,3 +13,6 @@ library further.
 5. Solve to exercises based on two different aspects of this ip6. All exercises are marked with TODO.
 6. Please fill out the [questionnaire](https://docs.google.com/forms/d/e/1FAIpQLSfv-ugjTS4DJAMPY4JHHt37nQdKZRfwjLsdXPoPc6DzONm-bg/viewform?usp=sf_link).
 
+_Note:_ If you are having troubles solving the exercises (or want to check if you got everything right), have a look at 
+        the branch [feature/solution](https://github.com/wildwyss/ip6-usertests/tree/feature/solution), which contains 
+        the solutions for this user test!

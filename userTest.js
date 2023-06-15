@@ -1,8 +1,8 @@
-import { from }       from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
-import { JsonMonad }  from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
 import * as _         from "./Kolibri/contrib/wild_wyss/src/sequence/sequence.js";
 import { arrayEq }    from "./Kolibri/docs/src/kolibri/util/arrayFunctions.js";
 import { isIterable } from "./Kolibri/contrib/wild_wyss/src/sequence/util/util.js";
+import { from }       from "./Kolibri/contrib/wild_wyss/src/jinq/jinq.js";
+import { JsonMonad }  from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
 
 /**
  * Utility function that helps to find your way through the examples.
@@ -30,7 +30,7 @@ const assert = (actual, expected, name) => {
   if (equal) {
     console.log(`OK: ${name}`);
   } else {
-    console.error(`${name}: not working yet! Expected: ${expected}, but got ${actual}`);
+    console.error(`ERROR: ${name}: not working yet! Expected: ${expected}, but got ${actual}`);
   }
 };
 // --------------------------------------------  INTRO  ----------------------------------------------------------------
@@ -144,7 +144,7 @@ const halve = x => x / 2;
  * console.log(..._.take(2)(h));
  * // => Logs '10, 5'
  */
-const halves = h0 => TODO("use repeatF and halve! to implement halves");
+const halves = h0 => TODO("use repeatF and halve to implement halves");
 
 // Your solution will be tested against the three fist values of the resulting sequence:
 assert(
@@ -385,7 +385,7 @@ const example2 = developers => {
   const allIds =
     from(JsonMonad(developers))
       .select(x => x['switch-edu-id'])
-      .result();
+      .result(); // unwrap JsonMonad again
 
   console.log("student ids: ", ...allIds);
 };
@@ -418,10 +418,14 @@ const example2 = developers => {
  * console.log(...salary);
  * // => Logs '70000'
  */
-const salaryOfMichael = devs => ["TODO: get the salary of michael using JINQ"];
+const salaryOfMichael = devs => {
+  TODO("Get the salary of michael using JINQ");
 
-// salaryOfMichael gets evaluated at the end of the file. 'Salary of Michael: 70000'
-// will be printed to the console if everything is ok.
+  return _.nil; // nil is an empty sequence
+};
+
+// salaryOfMichael gets evaluated at the end of the file.
+// 'Salary of Michael: 70000' will be printed to the console if everything is ok.
 
 /**
  * TODO 2: Sophia's programming languages
@@ -437,10 +441,14 @@ const salaryOfMichael = devs => ["TODO: get the salary of michael using JINQ"];
  * console.log(...langs);
  * // => Logs 'C++, Haskell'
  */
-const sophiasProgrammingLanguages = (devs, languages) => ["TODO: get sophia's favorite programming languages!"];
+const sophiasProgrammingLanguages = (devs, languages) => {
+  TODO("Get sophia's favorite programming languages!");
 
-// sophiasProgrammingLanguages gets evaluated at the end of the file. 'Sophias languages: C++, Haskell'
-// will be printed to the console if everything is ok.
+  return _.nil; // nil is an empty sequence
+};
+
+// sophiasProgrammingLanguages gets evaluated at the end of the file.
+// 'Sophias languages: C++, Haskell' will be printed to the console if everything is ok.
 
 /**
  * Conclusion:
@@ -475,6 +483,8 @@ const fetchAndParseFile = async path =>
 
 
 /**
+ * (You don't have to change this.)
+ *
  * Fetches json files asynchronously.
  * This function will be started immediately and run all JINQ code
  * after the json files have been fetched and parsed.

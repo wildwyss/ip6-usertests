@@ -17,4 +17,4 @@ export { nil }
  * console.log(...emptySequence);
  * // => Logs '' nothing to the console
  */
-const nil = () => Sequence(undefined, _ => false, _ => undefined);
+const nil = Sequence(undefined, _ => false, _ => undefined);

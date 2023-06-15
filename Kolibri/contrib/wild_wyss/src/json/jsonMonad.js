@@ -56,7 +56,7 @@ const JsonMonad = jsObject => {
       const result = maybeObj.and(iterator => {
         const newIt = iterator.and(elem => {
           const mapped = f(elem); // deep dive into json structure
-          return mapped ? ensureIterable(mapped) : nil();
+          return mapped ? ensureIterable(mapped) : nil;
         });
 
         return isEmpty(newIt) ? Nothing : Just(newIt);
