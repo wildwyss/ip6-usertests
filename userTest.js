@@ -6,12 +6,16 @@ import { JsonMonad }  from "./Kolibri/contrib/wild_wyss/src/json/jsonMonad.js";
 
 /**
  * Utility function that helps to find your way through the examples.
+ * (You don't have to change this.)
+ *
  * @type {(...data: Array) => any }
  */
-const TODO = data => console.log("TODO:", data); // we will use this later; don't worry for now
+const TODO = data => console.log("TODO :", data); // we will use this later; don't worry for now
 
 /**
  * Utility function to check the results of your test.
+ * (You don't have to understand this.)
+ *
  * @template _T_
  * @param { Array<*> | Iterable<*> | _T_ } actual
  * @param { Array<*> | Iterable<*> | _T_ } expected
@@ -28,9 +32,9 @@ const assert = (actual, expected, name) => {
   }
 
   if (equal) {
-    console.log(`OK: ${name}`);
+    console.log(`OK   : ${name}`);
   } else {
-    console.error(`ERROR: ${name}: not working yet! Expected: ${expected}, but got ${actual}`);
+    console.log(`ERROR: ${name}: not working yet! Expected: ${expected}, but got ${actual}`);
   }
 };
 // --------------------------------------------  INTRO  ----------------------------------------------------------------
@@ -112,7 +116,7 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  * console.log(..._.take(4)(repeated));
  * // => Logs '0 1 2 3'
  */
-const repeatF = (f, x) => TODO("implement repeatF");
+const repeatF = (f, x) => TODO("repeatF: implement repeatF");
 
 
 // Your solution will be tested against the three fist values of the resulting sequence:
@@ -144,7 +148,7 @@ const halve = x => x / 2;
  * console.log(..._.take(2)(h));
  * // => Logs '10, 5'
  */
-const halves = h0 => TODO("use repeatF and halve to implement halves");
+const halves = h0 => TODO("halves: use repeatF and halve to implement halves");
 
 // Your solution will be tested against the three fist values of the resulting sequence:
 assert(
@@ -209,7 +213,8 @@ const parabola = x => x * x;
  *
  * // => Logs '2.5, 2.25, 2.125, 2.0625, 2.03125'
  */
-const differentiate = h0 => f => x => TODO("implement differentiate using the previous created functions.");
+const differentiate = h0 => f => x =>
+  TODO("differentiate: implement differentiate using the previous created functions.");
 
 // Your solution will be tested against the three fist values of the resulting sequence:
 const diffs = differentiate(0.5)(parabola)(1);
@@ -242,7 +247,7 @@ assert(
  * console.log(smallDifference);
  * // => Logs '0.078125'
  */
-const within = eps => sequence => TODO("implement within");
+const within = eps => sequence => TODO("within: implement within");
 
 // Your solution will be tested against:
 const smallDifference = within(0.1)(halves(10));
@@ -261,7 +266,7 @@ assert(
  * Then pass the sequence to your function {@link within} to get the slope with an approximation of `0.000_1`.
  *
  */
-const slopeOfFAtX = TODO("calculate the slope with an approximation of 0.0001 and log it to the console.");
+const slopeOfFAtX = TODO("Approximated Slope: calculate the slope with an approximation of 0.0001 and log it to the console.");
 
 // Your solution will be tested against:
 assert(
