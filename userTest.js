@@ -110,7 +110,7 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  * console.log(..._.take(4)(repeated));
  * // => Logs '0 1 2 3'
  */
-const repeatF = (f, x) => _.Sequence(x, _ => true, f);
+const repeatF = (f, x) => TODO("implement repeatF");
 
 
 // Your solution will be tested against:
@@ -142,7 +142,7 @@ const halve = x => x / 2;
  * console.log(..._.take(2)(h));
  * // => Logs '10, 5'
  */
-const halves = h0 => repeatF( halve, h0);
+const halves = h0 => TODO("use repeatF and halve! to implement halves");
 
 // Your solution will be tested against:
 assert(
@@ -207,7 +207,7 @@ const parabola = x => x * x;
  *
  * // => Logs '2.5, 2.25, 2.125, 2.0625, 2.03125'
  */
-const differentiate = h0 => f => x => _.map ( slope(f)(x) ) (halves(h0));
+const differentiate = h0 => f => x => TODO("implement differentiate using the previous created functions.");
 
 // Your solution will be tested against:
 const diffs = differentiate(0.5)(parabola)(1);
@@ -240,14 +240,7 @@ assert(
  * console.log(smallDifference);
  * // => Logs '0.078125'
  */
-const within = eps => sequence => {
-  const [a, rest] = _.uncons(sequence);
-  const [b]       = _.uncons(rest);
-  const diff      = Math.abs(a - b);
-
-  if (diff <= eps) return b;
-  return within(eps)(rest);
-};
+const within = eps => sequence => TODO("implement within");
 
 // Your solution will be tested against:
 const smallDifference = within(0.1)(halves(10));
@@ -266,7 +259,7 @@ assert(
  * Then pass the sequence to your function {@link within} to get the slope with an approximation of `0.000_1`.
  *
  */
-const slopeOfFAtX = within(0.000_1)(diffs);
+const slopeOfFAtX = TODO("calculate the slope with an approximation of 0.0001 and log it to the console.");
 
 // Your solution will be tested against:
 assert(
@@ -423,12 +416,7 @@ const example2 = developers => {
  * console.log(...salary);
  * // => Logs '70000'
  */
-const salaryOfMichael = devs =>
-   from(JsonMonad(devs))
-      .where( dev => dev.name != null)
-      .where( dev => dev.name.startsWith("Michael"))
-      .select(dev => dev.salary)
-      .result();
+const salaryOfMichael = devs => TODO("get the salary of michael using JINQ");
 
 // salaryOfMichael gets evaluated at the end of the file. 'Salary of Michael: 70000'
 // will be printed to the console if everything is ok.
@@ -447,14 +435,7 @@ const salaryOfMichael = devs =>
  * console.log(...langs);
  * // => Logs 'C++, Haskell'
  */
-const sophiasProgrammingLanguages = (devs, languages) =>
-    from(JsonMonad(devs))
-      .where   ( dev    => dev.name === "Sophia Davis")
-      .map     ( sophia => sophia.favoriteLanguages)
-      .pairWith( JsonMonad(languages) )
-      .where   ( ([langId, language]) => langId === language.id )
-      .select  ( ([     _, language]) => language.name )
-      .result  ();
+const sophiasProgrammingLanguages = (devs, languages) => TODO("get sophia's favorite programming languages!");
 
 // sophiasProgrammingLanguages gets evaluated at the end of the file. 'Sophias languages: C++, Haskell'
 // will be printed to the console if everything is ok.
@@ -473,7 +454,6 @@ const sophiasProgrammingLanguages = (devs, languages) =>
  *
  * Isn't that great?
  */
-
 
 
 
