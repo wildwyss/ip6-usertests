@@ -71,6 +71,9 @@ const assert = (actual, expected, name) => {
  * In the following we ask you to solve small exercises based on lazy sequences.
  *
  */
+// Improv: Don't call it an "until" function but a "while", "continue" or "shouldContinue" function. That's more
+// descriptive. A "continue" function implies that the sequence will continue to be evaluated until the return value of
+// the until function is true. (According to your description it does the opposite.)
 
 /**
  *
@@ -116,7 +119,7 @@ console.log("A simple sequence from 0 to 100:", ...seq1);
  * console.log(..._.take(4)(repeated));
  * // => Logs '0 1 2 3'
  */
-const repeatF = (f, x) => TODO("repeatF: implement repeatF");
+const repeatF = (f, x) => _.Sequence(x, _ => true, f);
 
 
 // Your solution will be tested against the three fist values of the resulting sequence:
@@ -146,9 +149,10 @@ const halve = x => x / 2;
  * const h = halves(10);
  *
  * console.log(..._.take(2)(h));
+ * Improv: I prefer builder-style chaining, but I supposed you have to write this code in functional style.
  * // => Logs '10, 5'
  */
-const halves = h0 => TODO("halves: use repeatF and halve to implement halves");
+const halves = h0 => _.Sequence(h0, _ => true, halve);
 
 // Your solution will be tested against the three fist values of the resulting sequence:
 assert(
@@ -213,8 +217,7 @@ const parabola = x => x * x;
  *
  * // => Logs '2.5, 2.25, 2.125, 2.0625, 2.03125'
  */
-const differentiate = h0 => f => x =>
-  TODO("differentiate: implement differentiate using the previous created functions.");
+const differentiate = h0 => f => x => _.map(slope(f)(x))(_.Sequence(h0, _ => true, halve));
 
 // Your solution will be tested against the three fist values of the resulting sequence:
 const diffs = differentiate(0.5)(parabola)(1);
@@ -232,7 +235,7 @@ assert(
  *
  * One can argue that the value has been calculated accurately enough if two values of the sequence have a difference
  * smaller than a given epsilon. Implement a function called {@link within}, which takes an epsilon and
- * returns a value, if two following elements of a sequence have a smaller difference than epsilon!
+ * returns the first value in the sequence that has a difference < epsilon to the previous value.
  *
  * _Note:_ use {@link _.uncons} to get the first element of a sequence. See it's JSDoc example to see how it works!
  *
@@ -247,7 +250,18 @@ assert(
  * console.log(smallDifference);
  * // => Logs '0.078125'
  */
-const within = eps => sequence => TODO("within: implement within");
+const within = eps => sequence => {
+  let curr, prev;
+  // Try to find first element satisfying conditions within the first 1_000_000 elements.
+  for (let i = 0; i < 1_000_000; i++) {
+    [curr, sequence] = _.uncons(sequence);
+    if (Math.abs(curr - prev) < eps) {
+      return curr;
+    }
+    prev = curr;
+  }
+  return undefined;
+};
 
 // Your solution will be tested against:
 const smallDifference = within(0.1)(halves(10));
@@ -266,7 +280,7 @@ assert(
  * Then pass the sequence to your function {@link within} to get the slope with an approximation of `0.000_1`.
  *
  */
-const slopeOfFAtX = TODO("Approximated Slope: calculate the slope with an approximation of 0.0001 and log it to the console.");
+const slopeOfFAtX = within(0.000_1)(differentiate(0.5)(parabola)(1));
 
 // Your solution will be tested against:
 assert(
@@ -423,10 +437,16 @@ const example2 = developers => {
  * console.log(...salary);
  * // => Logs '70000'
  */
+// Improv: Why do I need to wrap the devs with JsonMonad? I'd like to just use from(devs) instead. Same for pairWith.
+// Improv: I don't think it's a good idea to select and where to express the same functionality as map and filter,
+// because you're implying a similarity to SQL syntax, which is not happening here, because if I flip the order of
+// select and where, the result is different. Either remove where and select and use map and filter instead, or
+// change the implementation to where select doesn't actually map immediately, but only has an effect when result is called.
 const salaryOfMichael = devs => {
-  TODO("Get the salary of michael using JINQ");
-
-  return _.nil; // nil is an empty sequence
+  return from(JsonMonad(devs))
+          .where(x => x['name']?.startsWith('Michael'))
+          .select(x => x['salary'])
+          .result();
 };
 
 // salaryOfMichael gets evaluated at the end of the file.
@@ -446,10 +466,29 @@ const salaryOfMichael = devs => {
  * console.log(...langs);
  * // => Logs 'C++, Haskell'
  */
+// Improv: Debuggability would greatly improve if you provide toString methods for objects, so that you can take a quick
+// peek instead of having to use functions to transform the object into something loggable.
+// Improv: Add more documentation on how to use pairWith. How are the different datasets combined? Ideally, let the
+// developer decide how they want to combine the datasets like in a join. That also avoids O(n*m) operations when
+// working the paired datasets.
 const sophiasProgrammingLanguages = (devs, languages) => {
-  TODO("Get sophia's favorite programming languages!");
-
-  return _.nil; // nil is an empty sequence
+  return from(JsonMonad(devs))
+      .pairWith(JsonMonad(languages))
+      .select(([dev, lang]) => [{favoriteLanguages: dev.favoriteLanguages.filter(l => l != null), ...dev}, lang])
+      .where(([dev, lang]) => dev['name']?.startsWith('Sophia') && dev['favorite-language'] === lang['id'])
+      .select(([_dev, lang]) => lang['name'])
+      .result();
+  // OR
+  from(JsonMonad(devs))
+      .pairWith(JsonMonad(languages))
+      .where(([dev, lang]) => dev['name']?.startsWith('Sophia') && dev['favorite-language'] === lang['id'])
+      .select(([_dev, lang]) => lang['name'])
+      .where(x => x != null)
+      .result();
+  // Improv: These are the first two options I thought of, and I don't think I would have been able to solve this
+  // without looking at the solution. Even though this is not efficient at all, I think result should be able to deal
+  // with nulls much more gracefully, because the errors I got are very cryptic.
+  // The other option is to describe how to use pairWith in a much more detailed way in the JSDoc.
 };
 
 // sophiasProgrammingLanguages gets evaluated at the end of the file.
